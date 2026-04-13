@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /teacher/
+Disallow: /portal/
+Allow: /
+
+Sitemap: https://yourdomain.com/sitemap.xml
