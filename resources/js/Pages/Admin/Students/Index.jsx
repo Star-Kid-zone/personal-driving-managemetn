@@ -95,7 +95,6 @@ export default function StudentsIndex({ students, teachers, filters }) {
                                                 className="w-9 h-9 rounded-xl object-cover" alt={s.name} />
                                             <div>
                                                 <div className="text-white font-medium text-sm">{s.name}</div>
-                                                <div className="text-muted text-xs">{s.teacher?.user?.name || '—'}</div>
                                             </div>
                                         </div>
                                     </td>

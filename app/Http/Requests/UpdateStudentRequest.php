@@ -23,8 +23,6 @@ class UpdateStudentRequest extends FormRequest
             'vehicle_type'   => 'sometimes|in:bike,car,both',
             'profile_photo'  => 'nullable|image|max:2048',
             'total_sessions' => 'sometimes|integer|min:1',
-            'teacher_id'     => 'nullable|exists:teachers,id',
-            'vehicle_id'     => 'nullable|exists:vehicles,id',
             'status'         => 'sometimes|in:active,completed,dropped,on_hold',
         ];
     }

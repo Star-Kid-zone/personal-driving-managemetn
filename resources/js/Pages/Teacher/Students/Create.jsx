@@ -6,12 +6,12 @@ import FormField from '@/Components/UI/FormField';
 
 const STEPS = ['Personal Info', 'Vehicle & Sessions', 'Payment'];
 
-export default function TeacherStudentCreate({ vehicles }) {
+export default function TeacherStudentCreate() {
     const [step, setStep] = useState(0);
     const { data, setData, post, processing, errors } = useForm({
         name: '', phone: '', alt_phone: '', email: '', address: '',
         city: '', pincode: '', date_of_birth: '', gender: '',
-        vehicle_type: 'car', vehicle_id: '',
+        vehicle_type: 'car',
         total_sessions: 20, enrollment_date: new Date().toISOString().slice(0, 10),
         total_fee: '', amount_paid: '0', payment_type: 'full', payment_mode: 'cash',
     });
@@ -111,14 +111,6 @@ export default function TeacherStudentCreate({ vehicles }) {
                                     ))}
                                 </div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <FormField label="Assign Vehicle" error={errors.vehicle_id}>
-                                        <select className="field" value={data.vehicle_id} onChange={e => setData('vehicle_id', e.target.value)}>
-                                            <option value="">Auto-assign</option>
-                                            {vehicles.filter(v => data.vehicle_type === 'both' || v.type === data.vehicle_type)
-                                                .map(v => <option key={v.id} value={v.id}>{v.make} {v.model} ({v.registration_number})</option>)}
-                                        </select>
-                                    </FormField>
-
                                     <FormField label="Total Sessions" required error={errors.total_sessions}>
                                         <input type="number" className="field" min="5" max="100"
                                             value={data.total_sessions} onChange={e => setData('total_sessions', e.target.value)} />

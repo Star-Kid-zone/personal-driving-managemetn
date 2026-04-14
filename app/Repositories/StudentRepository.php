@@ -15,7 +15,7 @@ class StudentRepository implements StudentRepositoryInterface
     public function all(array $filters = []): LengthAwarePaginator
     {
         $query = $this->model->newQuery()
-            ->with(['teacher.user', 'payment', 'llrRecord'])
+            ->with(['payment', 'llrRecord'])
             ->latest();
 
         if (!empty($filters['search'])) {
@@ -35,17 +35,13 @@ class StudentRepository implements StudentRepositoryInterface
             $query->where('vehicle_type', $filters['vehicle_type']);
         }
 
-        if (!empty($filters['teacher_id'])) {
-            $query->where('teacher_id', $filters['teacher_id']);
-        }
-
         return $query->paginate($filters['per_page'] ?? 15);
     }
 
     public function find(int $id): ?Model
     {
         return $this->model->with([
-            'teacher.user', 'vehicle', 'payment.transactions',
+            'payment.transactions',
             'llrRecord', 'documents', 'trips.trip',
         ])->findOrFail($id);
     }
@@ -53,14 +49,14 @@ class StudentRepository implements StudentRepositoryInterface
     public function findByStudentId(string $studentId): ?Model
     {
         return $this->model->where('student_id', $studentId)
-            ->with(['teacher.user', 'vehicle', 'payment', 'llrRecord'])
+            ->with(['payment', 'llrRecord'])
             ->first();
     }
 
     public function findByAccessToken(string $token): ?Model
     {
         return $this->model->where('access_token', $token)
-            ->with(['teacher.user', 'vehicle', 'payment.transactions', 'llrRecord', 'trips.trip'])
+            ->with(['payment.transactions', 'llrRecord', 'trips.trip'])
             ->first();
     }
 
@@ -83,7 +79,7 @@ class StudentRepository implements StudentRepositoryInterface
 
     public function getByTeacher(int $teacherId): Collection
     {
-        return $this->model->where('teacher_id', $teacherId)
+        return $this->model->whereHas('trips.trip', fn($q) => $q->where('teacher_id', $teacherId))
             ->with(['payment', 'llrRecord'])
             ->active()
             ->orderBy('name')
@@ -93,7 +89,7 @@ class StudentRepository implements StudentRepositoryInterface
     public function getActiveStudents(): Collection
     {
         return $this->model->active()
-            ->with(['teacher.user', 'payment'])
+            ->with(['payment'])
             ->orderBy('name')
             ->get();
     }
@@ -102,7 +98,7 @@ class StudentRepository implements StudentRepositoryInterface
     {
         return $this->model->where('status', 'active')
             ->whereColumn('completed_sessions', '<', 'total_sessions')
-            ->with(['teacher.user', 'payment'])
+            ->with(['payment'])
             ->get();
     }
 

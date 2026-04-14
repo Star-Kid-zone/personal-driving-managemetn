@@ -31,7 +31,7 @@ class TripController extends Controller
     {
         $teachers = Teacher::with('user')->where('is_active', true)->get();
         $vehicles = Vehicle::active()->get();
-        $students = Student::active()->with('teacher.user')->get();
+        $students = Student::active()->get();
 
         return Inertia::render('Admin/Trips/Create', compact('teachers', 'vehicles', 'students'));
     }

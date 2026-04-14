@@ -26,7 +26,7 @@ class StudentController extends Controller
     public function index(Request $request): Response
     {
         $teacher  = auth()->user()->teacher;
-        $filters  = array_merge($request->only(['search', 'status']), ['teacher_id' => $teacher->id]);
+        $filters  = $request->only(['search', 'status']);
         $students = $this->studentService->list($filters);
 
         return Inertia::render('Teacher/Students/Index', [
@@ -37,14 +37,12 @@ class StudentController extends Controller
 
     public function create(): Response
     {
-        $vehicles = Vehicle::active()->get();
-        return Inertia::render('Teacher/Students/Create', compact('vehicles'));
+        return Inertia::render('Teacher/Students/Create');
     }
 
     public function store(EnrollStudentRequest $request): RedirectResponse
     {
         $data              = $request->validated();
-        $data['teacher_id']= auth()->user()->teacher->id;
         $student           = $this->studentService->enroll($data);
 
         return redirect()->route('teacher.students.show', $student->id)
@@ -108,12 +106,15 @@ class StudentController extends Controller
     public function llrList(): Response
     {
         $teacher  = auth()->user()->teacher;
+        
+        $hasTeacherTrips = fn($student) => $student->trips->contains(fn($ts) => $ts->trip && $ts->trip->teacher_id === $teacher->id);
+
         $awaiting = $this->llrService->getStudentsAwaitingLlr()
-            ->filter(fn($r) => $r->student->teacher_id === $teacher->id);
+            ->filter(fn($r) => $hasTeacherTrips($r->student));
         $eligible = $this->llrService->getDlEligibleStudents()
-            ->filter(fn($r) => $r->student->teacher_id === $teacher->id);
+            ->filter(fn($r) => $hasTeacherTrips($r->student));
         $tests    = $this->llrService->getUpcomingTests()
-            ->filter(fn($r) => $r->student->teacher_id === $teacher->id);
+            ->filter(fn($r) => $hasTeacherTrips($r->student));
 
         return Inertia::render('Teacher/LlrTracking', [
             'awaiting' => $awaiting->values(),

@@ -32,19 +32,9 @@ class Teacher extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function students(): HasMany
-    {
-        return $this->hasMany(Student::class);
-    }
-
     public function trips(): HasMany
     {
         return $this->hasMany(Trip::class);
-    }
-
-    public function getActiveStudentsCountAttribute(): int
-    {
-        return $this->students()->active()->count();
     }
 
     public function getTotalTripsCountAttribute(): int

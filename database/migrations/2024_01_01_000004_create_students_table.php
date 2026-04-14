@@ -33,8 +33,6 @@ return new class extends Migration
             $table->integer('completed_sessions')->default(0);
 
             // Enrollment
-            $table->foreignId('teacher_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('vehicle_id')->nullable()->constrained()->nullOnDelete();
             $table->date('enrollment_date');
             $table->date('expected_completion_date')->nullable();
 

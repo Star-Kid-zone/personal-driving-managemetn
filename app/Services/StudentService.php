@@ -98,7 +98,7 @@ class StudentService
                 'managed_by' => auth()->id(),
             ]);
 
-            return $student->fresh(['teacher.user', 'payment', 'llrRecord']);
+            return $student->fresh(['payment', 'llrRecord']);
         });
     }
 

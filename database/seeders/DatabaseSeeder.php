@@ -115,7 +115,6 @@ class DatabaseSeeder extends Seeder
 
         foreach ($tamilNames as $i => $person) {
             $vType      = ['bike', 'car', 'both'][rand(0, 2)];
-            $teacher    = $teachers[array_rand($teachers)];
             $totalSess  = rand(15, 25);
             $compSess   = rand(0, $totalSess);
             $totalFee   = $vType === 'both' ? rand(6000, 8000) : ($vType === 'car' ? rand(3500, 5000) : rand(2000, 3000));
@@ -136,8 +135,6 @@ class DatabaseSeeder extends Seeder
                 'vehicle_type'       => $vType,
                 'total_sessions'     => $totalSess,
                 'completed_sessions' => $compSess,
-                'teacher_id'         => $teacher->id,
-                'vehicle_id'         => $vehicles[array_rand($vehicles)]->id,
                 'enrollment_date'    => $enrolled->toDateString(),
                 'status'             => ($compSess >= $totalSess) ? 'completed' : 'active',
                 'access_token'       => Str::random(32) . '-' . time() . $i,

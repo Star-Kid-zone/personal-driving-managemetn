@@ -20,9 +20,11 @@ class Student extends Model
         'date_of_birth', 'gender', 'vehicle_type', 'aadhaar_number', 'profile_photo',
         'aadhaar_document', 'address_proof', 'age_proof', 'photos',
         'total_sessions', 'completed_sessions',
-        'teacher_id', 'vehicle_id', 'enrollment_date', 'expected_completion_date',
+        'enrollment_date', 'expected_completion_date',
         'status', 'access_token',
     ];
+
+    protected $appends = ['age'];
 
     protected function casts(): array
     {
@@ -71,17 +73,6 @@ class Student extends Model
     public function getDlEligibleAttribute(): bool
     {
         return $this->llrRecord?->dl_eligible ?? false;
-    }
-
-    // Relationships
-    public function teacher(): BelongsTo
-    {
-        return $this->belongsTo(Teacher::class);
-    }
-
-    public function vehicle(): BelongsTo
-    {
-        return $this->belongsTo(Vehicle::class);
     }
 
     public function payment(): HasOne

@@ -15,8 +15,6 @@ export default function StudentEdit({ student, teachers, vehicles }) {
         gender:         student.gender,
         vehicle_type:   student.vehicle_type,
         total_sessions: student.total_sessions,
-        teacher_id:     student.teacher_id     || '',
-        vehicle_id:     student.vehicle_id     || '',
         status:         student.status,
     });
 
@@ -89,20 +87,6 @@ export default function StudentEdit({ student, teachers, vehicles }) {
                                     <option value="completed">Completed</option>
                                     <option value="on_hold">On Hold</option>
                                     <option value="dropped">Dropped</option>
-                                </select>
-                            </FormField>
-
-                            <FormField label="Assign Teacher" error={errors.teacher_id}>
-                                <select className="field" value={data.teacher_id} onChange={e => setData('teacher_id', e.target.value)}>
-                                    <option value="">None</option>
-                                    {teachers.map(t => <option key={t.id} value={t.id}>{t.user?.name}</option>)}
-                                </select>
-                            </FormField>
-
-                            <FormField label="Assign Vehicle" error={errors.vehicle_id}>
-                                <select className="field" value={data.vehicle_id} onChange={e => setData('vehicle_id', e.target.value)}>
-                                    <option value="">None</option>
-                                    {vehicles.map(v => <option key={v.id} value={v.id}>{v.make} {v.model} ({v.registration_number})</option>)}
                                 </select>
                             </FormField>
                         </div>

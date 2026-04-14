@@ -16,7 +16,7 @@ class LlrController extends Controller
 
     public function index(): \Inertia\Response
     {
-        $allRecords   = LlrRecord::with(['student', 'student.teacher.user'])->get();
+        $allRecords   = LlrRecord::with(['student'])->get();
         $awaiting     = $this->llrService->getStudentsAwaitingLlr();
         $eligible     = $this->llrService->getDlEligibleStudents();
         $upcomingTests= $this->llrService->getUpcomingTests();

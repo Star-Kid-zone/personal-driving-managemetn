@@ -27,8 +27,6 @@ class EnrollStudentRequest extends FormRequest
             'address_proof'   => 'nullable|file|max:5120',
             'age_proof'       => 'nullable|file|max:5120',
             'total_sessions'  => 'required|integer|min:5|max:100',
-            'teacher_id'      => 'nullable|exists:teachers,id',
-            'vehicle_id'      => 'nullable|exists:vehicles,id',
             'enrollment_date' => 'nullable|date',
             // Payment
             'total_fee'       => 'required|numeric|min:0',

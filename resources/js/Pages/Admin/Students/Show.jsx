@@ -3,6 +3,11 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { Edit, Download, CreditCard, BookOpen, Car, Calendar, CheckCircle, Clock, AlertCircle, X } from 'lucide-react';
 
+function formatDate(dateStr) {
+    if (!dateStr) return null;
+    return new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
 function Section({ title, icon: Icon, children }) {
     return (
         <div className="nm-card p-5" data-aos="fade-up">
@@ -129,18 +134,15 @@ export default function StudentShow({ student }) {
                         <InfoRow label="Phone" value={student.phone} />
                         <InfoRow label="Alt Phone" value={student.alt_phone} />
                         <InfoRow label="Email" value={student.email} />
-                        <InfoRow label="Date of Birth" value={student.date_of_birth} />
-                        <InfoRow label="Age" value={`${student.age} years`} />
+                        <InfoRow label="Date of Birth" value={formatDate(student.date_of_birth)} />
+                        <InfoRow label="Age" value={student.age ? `${student.age} Years` : null} />
                         <InfoRow label="Aadhaar" value={student.aadhaar_number ? '••••' + student.aadhaar_number.slice(-4) : null} />
                         <InfoRow label="Address" value={student.address} />
                         <InfoRow label="City" value={`${student.city} ${student.pincode ? '- ' + student.pincode : ''}`} />
                     </Section>
 
                     <Section title="Assignment" icon={Car}>
-                        <InfoRow label="Teacher" value={student.teacher?.user?.name} />
-                        <InfoRow label="Vehicle" value={student.vehicle ? `${student.vehicle.make} ${student.vehicle.model}` : null} />
-                        <InfoRow label="Reg. No." value={student.vehicle?.registration_number} />
-                        <InfoRow label="Enrolled" value={student.enrollment_date} />
+                        <InfoRow label="Enrolled" value={formatDate(student.enrollment_date)} />
                     </Section>
                 </div>
 
@@ -193,7 +195,7 @@ export default function StudentShow({ student }) {
                                 <div className="text-xs text-muted uppercase tracking-wider mb-2">Transaction History</div>
                                 {payment.transactions.map(t => (
                                     <div key={t.id} className="flex justify-between text-xs p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                                        <span className="text-muted">{t.paid_on} · {t.payment_mode}</span>
+                                        <span className="text-muted">{formatDate(t.paid_on)} · {t.payment_mode}</span>
                                         <span className="text-emerald-400 font-medium">+₹{Number(t.amount).toLocaleString('en-IN')}</span>
                                     </div>
                                 ))}

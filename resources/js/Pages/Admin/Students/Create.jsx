@@ -12,7 +12,7 @@ export default function CreateStudent({ teachers, vehicles }) {
     const { data, setData, post, processing, errors } = useForm({
         name: '', phone: '', alt_phone: '', email: '', address: '',
         city: '', pincode: '', date_of_birth: '', gender: '', aadhaar_number: '',
-        vehicle_type: 'car', teacher_id: '', vehicle_id: '',
+        vehicle_type: 'car',
         total_sessions: 20, enrollment_date: new Date().toISOString().slice(0,10),
         total_fee: '', amount_paid: '0', payment_type: 'full', payment_mode: 'cash',
         profile_photo: null, aadhaar_document: null, address_proof: null, age_proof: null,
@@ -125,21 +125,6 @@ export default function CreateStudent({ teachers, vehicles }) {
                                             ))}
                                         </div>
                                     </div>
-
-                                    <FormField label="Assign Teacher" error={errors.teacher_id}>
-                                        <select className="field" value={data.teacher_id} onChange={e => setData('teacher_id', e.target.value)}>
-                                            <option value="">Auto-assign</option>
-                                            {teachers.map(t => <option key={t.id} value={t.id}>{t.user?.name} ({t.specialization})</option>)}
-                                        </select>
-                                    </FormField>
-
-                                    <FormField label="Assign Vehicle" error={errors.vehicle_id}>
-                                        <select className="field" value={data.vehicle_id} onChange={e => setData('vehicle_id', e.target.value)}>
-                                            <option value="">Auto-assign</option>
-                                            {vehicles.filter(v => data.vehicle_type === 'both' || v.type === data.vehicle_type)
-                                                .map(v => <option key={v.id} value={v.id}>{v.make} {v.model} ({v.registration_number})</option>)}
-                                        </select>
-                                    </FormField>
 
                                     <FormField label="Total Sessions" required error={errors.total_sessions}>
                                         <input type="number" className="field" min="5" max="100"

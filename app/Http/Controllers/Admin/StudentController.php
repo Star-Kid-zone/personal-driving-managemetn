@@ -27,22 +27,17 @@ class StudentController extends Controller
 
     public function index(Request $request): Response
     {
-        $students = $this->studentService->list($request->only(['search', 'status', 'vehicle_type', 'teacher_id']));
-        $teachers = Teacher::with('user')->where('is_active', true)->get();
+        $students = $this->studentService->list($request->only(['search', 'status', 'vehicle_type']));
 
         return Inertia::render('Admin/Students/Index', [
             'students' => $students,
-            'teachers' => $teachers,
-            'filters'  => $request->only(['search', 'status', 'vehicle_type', 'teacher_id']),
+            'filters'  => $request->only(['search', 'status', 'vehicle_type']),
         ]);
     }
 
     public function create(): Response
     {
-        $teachers = Teacher::with('user')->where('is_active', true)->get();
-        $vehicles = Vehicle::active()->get();
-
-        return Inertia::render('Admin/Students/Create', compact('teachers', 'vehicles'));
+        return Inertia::render('Admin/Students/Create');
     }
 
     public function store(EnrollStudentRequest $request): RedirectResponse
@@ -65,10 +60,8 @@ class StudentController extends Controller
     public function edit(int $id): Response
     {
         $student  = $this->studentService->findById($id);
-        $teachers = Teacher::with('user')->where('is_active', true)->get();
-        $vehicles = Vehicle::active()->get();
 
-        return Inertia::render('Admin/Students/Edit', compact('student', 'teachers', 'vehicles'));
+        return Inertia::render('Admin/Students/Edit', compact('student'));
     }
 
     public function update(UpdateStudentRequest $request, int $id): RedirectResponse

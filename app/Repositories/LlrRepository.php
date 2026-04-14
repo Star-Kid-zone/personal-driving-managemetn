@@ -30,7 +30,7 @@ class LlrRepository implements LlrRepositoryInterface
     {
         return $this->model
             ->whereIn('llr_status', ['not_applied', 'documents_pending'])
-            ->with(['student', 'student.teacher.user'])
+            ->with(['student'])
             ->get();
     }
 
@@ -39,7 +39,7 @@ class LlrRepository implements LlrRepositoryInterface
         return $this->model
             ->where('dl_eligible', true)
             ->whereIn('dl_status', ['waiting_period', 'documents_pending'])
-            ->with(['student', 'student.teacher.user'])
+            ->with(['student'])
             ->get();
     }
 

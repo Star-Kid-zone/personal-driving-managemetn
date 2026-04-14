@@ -3,6 +3,11 @@ import { Head, useForm, router } from '@inertiajs/react';
 import { useState } from 'react';
 import { CreditCard, BookOpen, Car, CheckCircle, Clock, X, Download, ChevronDown } from 'lucide-react';
 
+function formatDate(dateStr) {
+    if (!dateStr) return null;
+    return new Date(dateStr).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
+
 function Section({ title, icon: Icon, children, action }) {
     return (
         <div className="nm-card p-5" data-aos="fade-up">
@@ -93,8 +98,7 @@ export default function TeacherStudentShow({ student }) {
                         <div className="text-muted text-sm mt-2">{student.completed_sessions} of {student.total_sessions} sessions</div>
                     </div>
                     <InfoRow label="Phone" value={student.phone} />
-                    <InfoRow label="Vehicle" value={student.vehicle ? `${student.vehicle.make} ${student.vehicle.model}` : null} />
-                    <InfoRow label="Enrolled" value={student.enrollment_date} />
+                    <InfoRow label="Enrolled" value={formatDate(student.enrollment_date)} />
                     <InfoRow label="Remaining" value={`${student.remaining_sessions} sessions`} className="text-[#D4AF37]" />
 
                     {/* Recent trips */}
@@ -170,7 +174,7 @@ export default function TeacherStudentShow({ student }) {
                             <div className="text-xs text-muted uppercase tracking-wider mb-1">History</div>
                             {payment.transactions.map(t => (
                                 <div key={t.id} className="flex justify-between text-xs p-2 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)' }}>
-                                    <span className="text-muted">{t.paid_on} · {t.payment_mode}</span>
+                                    <span className="text-muted">{formatDate(t.paid_on)} · {t.payment_mode}</span>
                                     <span className="text-emerald-400">+₹{Number(t.amount).toLocaleString('en-IN')}</span>
                                 </div>
                             ))}

@@ -48,8 +48,6 @@ class DashboardService
 
         $teacherStats = Teacher::with('user')
             ->withCount([
-                'students',
-                'students as active_students_count' => fn($q) => $q->where('status', 'active'),
                 'trips as completed_trips_count'    => fn($q) => $q->where('status', 'completed'),
             ])
             ->where('is_active', true)->get();
@@ -64,25 +62,25 @@ class DashboardService
 
     public function getTeacherDashboard(int $teacherId): array
     {
-        $myStudents     = Student::where('teacher_id', $teacherId)->count();
-        $activeStudents = Student::where('teacher_id', $teacherId)->where('status', 'active')->count();
+        $myStudents     = Student::whereHas('trips.trip', fn($q) => $q->where('teacher_id', $teacherId))->count();
+        $activeStudents = Student::whereHas('trips.trip', fn($q) => $q->where('teacher_id', $teacherId))->where('status', 'active')->count();
         $todaysTrips    = Trip::where('teacher_id', $teacherId)->whereDate('trip_date', today())->count();
         $totalTrips     = Trip::where('teacher_id', $teacherId)->where('status', 'completed')->count();
 
-        $llrPending = LlrRecord::whereHas('student', fn($q) => $q->where('teacher_id', $teacherId))
+        $llrPending = LlrRecord::whereHas('student.trips.trip', fn($q) => $q->where('teacher_id', $teacherId))
             ->where('llr_status', 'not_applied')->count();
 
-        $dlEligible = LlrRecord::whereHas('student', fn($q) => $q->where('teacher_id', $teacherId))
+        $dlEligible = LlrRecord::whereHas('student.trips.trip', fn($q) => $q->where('teacher_id', $teacherId))
             ->where('dl_eligible', true)
             ->whereNotIn('dl_status', ['issued'])->count();
 
-        $incompleteStudents = Student::where('teacher_id', $teacherId)
+        $incompleteStudents = Student::whereHas('trips.trip', fn($q) => $q->where('teacher_id', $teacherId))
             ->where('status', 'active')
             ->whereColumn('completed_sessions', '<', 'total_sessions')
             ->with(['payment'])
             ->limit(10)->get();
 
-        $upcomingTests = LlrRecord::whereHas('student', fn($q) => $q->where('teacher_id', $teacherId))
+        $upcomingTests = LlrRecord::whereHas('student.trips.trip', fn($q) => $q->where('teacher_id', $teacherId))
             ->where(function ($q) {
                 $q->where('llr_test_date', '>=', now())
                   ->orWhere('dl_test_date', '>=', now());
