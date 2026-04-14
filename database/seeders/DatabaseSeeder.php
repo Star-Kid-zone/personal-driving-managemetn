@@ -51,14 +51,10 @@ class DatabaseSeeder extends Seeder
             $teachers[] = Teacher::create([
                 'user_id'        => $user->id,
                 'employee_id'    => sprintf('TCH-%04d', $i + 1),
-                'license_number' => 'TN58 20' . sprintf('%04d', rand(1000, 9999)),
-                'license_expiry' => Carbon::now()->addYears(rand(1, 5)),
                 'address'        => ['123 Anna Nagar, Chennai', '45 Gandhi Road, Chennai', '78 Nehru Street, Chennai'][$i],
                 'date_of_birth'  => Carbon::now()->subYears(rand(28, 45)),
                 'gender'         => ($td['name'] === 'Priya Devi') ? 'female' : 'male',
                 'specialization' => $td['spec'],
-                'monthly_salary' => rand(15000, 25000),
-                'joined_date'    => Carbon::now()->subMonths(rand(6, 36)),
                 'is_active'      => true,
             ]);
         }

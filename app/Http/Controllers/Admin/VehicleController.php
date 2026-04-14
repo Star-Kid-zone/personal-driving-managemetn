@@ -35,8 +35,6 @@ class VehicleController extends Controller
             'insurance_expiry'    => 'nullable|date',
             'pollution_expiry'    => 'nullable|date',
             'fitness_expiry'      => 'nullable|date',
-            'chassis_number'      => 'nullable|string',
-            'engine_number'       => 'nullable|string',
         ]);
         Vehicle::create($validated);
         return redirect()->route('admin.vehicles.index')

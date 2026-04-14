@@ -21,8 +21,7 @@ return new class extends Migration
             $table->date('insurance_expiry')->nullable();
             $table->date('pollution_expiry')->nullable();
             $table->date('fitness_expiry')->nullable();
-            $table->string('chassis_number')->nullable();
-            $table->string('engine_number')->nullable();
+
             $table->string('vehicle_photo')->nullable();
             $table->enum('status', ['active', 'maintenance', 'inactive'])->default('active');
             $table->text('notes')->nullable();

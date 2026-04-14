@@ -13,20 +13,17 @@ class Teacher extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id', 'employee_id', 'license_number', 'license_expiry',
+        'user_id', 'employee_id',
         'address', 'date_of_birth', 'gender', 'specialization',
-        'monthly_salary', 'joined_date', 'emergency_contact',
+        'emergency_contact',
         'aadhaar_number', 'aadhaar_document', 'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'license_expiry' => 'date',
             'date_of_birth' => 'date',
-            'joined_date' => 'date',
             'is_active' => 'boolean',
-            'monthly_salary' => 'decimal:2',
         ];
     }
 

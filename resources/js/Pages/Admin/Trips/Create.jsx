@@ -1,6 +1,7 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { Route, Users, X, Check } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
 
 export default function TripCreate({ teachers, vehicles, students }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -17,21 +18,9 @@ export default function TripCreate({ teachers, vehicles, students }) {
     const filteredStudents = students.filter(s =>
         s.vehicle_type === data.vehicle_type || s.vehicle_type === 'both'
     );
-    const filteredVehicles = vehicles.filter(v =>
-        v.type === data.vehicle_type
-    );
+    const filteredVehicles = vehicles.filter(v => v.type === data.vehicle_type);
 
     const submit = (e) => { e.preventDefault(); post(route('admin.trips.store')); };
-
-    const Field = ({ label, name, required, children }) => (
-        <div>
-            <label className="text-xs text-muted mb-1.5 block font-medium">
-                {label}{required && <span className="text-red-400 ml-0.5">*</span>}
-            </label>
-            {children}
-            {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
-        </div>
-    );
 
     return (
         <AppLayout title="Schedule Trip">
@@ -50,7 +39,8 @@ export default function TripCreate({ teachers, vehicles, students }) {
                                 <label className="text-xs text-muted mb-2 block font-medium">Vehicle Type *</label>
                                 <div className="flex gap-3">
                                     {['car', 'bike'].map(t => (
-                                        <button type="button" key={t} onClick={() => { setData('vehicle_type', t); setData('student_ids', []); setData('vehicle_id', ''); }}
+                                        <button type="button" key={t}
+                                            onClick={() => { setData('vehicle_type', t); setData('student_ids', []); setData('vehicle_id', ''); }}
                                             className={`flex-1 py-3 rounded-xl border-2 font-medium text-sm capitalize transition-all ${
                                                 data.vehicle_type === t
                                                     ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37]'
@@ -62,36 +52,36 @@ export default function TripCreate({ teachers, vehicles, students }) {
                                 </div>
                             </div>
 
-                            <Field label="Teacher" name="teacher_id" required>
+                            <FormField label="Teacher" required error={errors.teacher_id}>
                                 <select className="field" value={data.teacher_id} onChange={e => setData('teacher_id', e.target.value)}>
                                     <option value="">Select teacher</option>
                                     {teachers.map(t => <option key={t.id} value={t.id}>{t.user?.name} ({t.specialization})</option>)}
                                 </select>
-                            </Field>
+                            </FormField>
 
-                            <Field label="Vehicle" name="vehicle_id" required>
+                            <FormField label="Vehicle" required error={errors.vehicle_id}>
                                 <select className="field" value={data.vehicle_id} onChange={e => setData('vehicle_id', e.target.value)}>
                                     <option value="">Select vehicle</option>
                                     {filteredVehicles.map(v => <option key={v.id} value={v.id}>{v.make} {v.model} ({v.registration_number})</option>)}
                                 </select>
-                            </Field>
+                            </FormField>
 
-                            <Field label="Trip Date" name="trip_date" required>
+                            <FormField label="Trip Date" required error={errors.trip_date}>
                                 <input type="date" className="field" value={data.trip_date}
-                                    min={new Date().toISOString().slice(0,10)}
+                                    min={new Date().toISOString().slice(0, 10)}
                                     onChange={e => setData('trip_date', e.target.value)} />
-                            </Field>
+                            </FormField>
 
-                            <Field label="Start Time" name="start_time" required>
+                            <FormField label="Start Time" required error={errors.start_time}>
                                 <input type="time" className="field" value={data.start_time}
                                     onChange={e => setData('start_time', e.target.value)} />
-                            </Field>
+                            </FormField>
 
                             <div className="sm:col-span-2">
-                                <Field label="Notes" name="notes">
+                                <FormField label="Notes" error={errors.notes}>
                                     <textarea className="field h-16 resize-none" placeholder="Optional route or notes…"
                                         value={data.notes} onChange={e => setData('notes', e.target.value)} />
-                                </Field>
+                                </FormField>
                             </div>
                         </div>
 
@@ -116,9 +106,7 @@ export default function TripCreate({ teachers, vehicles, students }) {
                                     return (
                                         <button type="button" key={s.id} onClick={() => toggleStudent(s.id)}
                                             className={`flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all ${
-                                                selected
-                                                    ? 'border-[#D4AF37] bg-[#D4AF37]/08'
-                                                    : 'border-white/08 hover:border-white/15'
+                                                selected ? 'border-[#D4AF37] bg-[#D4AF37]/08' : 'border-white/08 hover:border-white/15'
                                             }`}>
                                             <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&color=D4AF37&background=000666&size=64`}
                                                 className="w-8 h-8 rounded-lg" alt={s.name} />

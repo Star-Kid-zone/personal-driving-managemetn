@@ -1,6 +1,10 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { Car } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
+
+const COLORS = ['White', 'Silver', 'Black', 'Blue', 'Red', 'Grey', 'Brown', 'Green', 'Yellow', 'Orange'];
+const FUELS  = ['petrol', 'diesel', 'electric', 'cng'];
 
 export default function VehicleCreate() {
     const { data, setData, post, processing, errors } = useForm({
@@ -8,24 +12,10 @@ export default function VehicleCreate() {
         make: '', model: '', year: new Date().getFullYear(),
         type: 'car', color: '', fuel_type: 'petrol',
         insurance_expiry: '', pollution_expiry: '', fitness_expiry: '',
-        chassis_number: '', engine_number: '', notes: '',
+        notes: '',
     });
 
     const submit = (e) => { e.preventDefault(); post(route('admin.vehicles.store')); };
-
-    const Field = ({ label, name, type = 'text', required, placeholder, children }) => (
-        <div>
-            <label className="text-xs text-muted mb-1.5 block font-medium">
-                {label}{required && <span className="text-red-400 ml-0.5">*</span>}
-            </label>
-            {children || (
-                <input type={type} className={`field ${errors[name] ? 'border-red-500/50' : ''}`}
-                    placeholder={placeholder} value={data[name] || ''}
-                    onChange={e => setData(name, e.target.value)} />
-            )}
-            {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
-        </div>
-    );
 
     return (
         <AppLayout title="Register Vehicle">
@@ -37,7 +27,9 @@ export default function VehicleCreate() {
                             <Car size={18} className="text-[#D4AF37]" /> Register Vehicle
                         </h2>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Field label="Registration Number" name="registration_number" required placeholder="TN58 AX 1234" />
+                            <FormField label="Registration Number" required error={errors.registration_number}
+                                placeholder="TN58 AX 1234" value={data.registration_number}
+                                onChange={e => setData('registration_number', e.target.value)} />
 
                             <div>
                                 <label className="text-xs text-muted mb-2 block font-medium">Vehicle Type *</label>
@@ -53,28 +45,47 @@ export default function VehicleCreate() {
                                 </div>
                             </div>
 
-                            <Field label="Make" name="make" required placeholder="Maruti, Honda, TVS..." />
-                            <Field label="Model" name="model" required placeholder="Alto, Activa, Jupiter..." />
-                            <Field label="Year" name="year" type="number" required placeholder="2022" />
-                            <Field label="Color" name="color" placeholder="White, Black, Blue..." />
-                            <Field label="Fuel Type" name="fuel_type">
-                                <select className="field" value={data.fuel_type} onChange={e => setData('fuel_type', e.target.value)}>
-                                    <option value="petrol">Petrol</option>
-                                    <option value="diesel">Diesel</option>
-                                    <option value="electric">Electric</option>
-                                    <option value="cng">CNG</option>
+                            <FormField label="Make" required error={errors.make}
+                                placeholder="Maruti, Honda, TVS…" value={data.make}
+                                onChange={e => setData('make', e.target.value)} />
+
+                            <FormField label="Model" required error={errors.model}
+                                placeholder="Alto, Activa, Jupiter…" value={data.model}
+                                onChange={e => setData('model', e.target.value)} />
+
+                            <FormField label="Year" type="number" required error={errors.year}
+                                placeholder="2022" value={data.year}
+                                onChange={e => setData('year', e.target.value)} />
+
+                            <FormField label="Colour" error={errors.color}>
+                                <select className="field" value={data.color} onChange={e => setData('color', e.target.value)}>
+                                    <option value="">Select colour</option>
+                                    {COLORS.map(c => <option key={c} value={c}>{c}</option>)}
                                 </select>
-                            </Field>
-                            <Field label="Insurance Expiry" name="insurance_expiry" type="date" />
-                            <Field label="PUC / Pollution Expiry" name="pollution_expiry" type="date" />
-                            <Field label="Fitness Expiry" name="fitness_expiry" type="date" />
-                            <Field label="Chassis Number" name="chassis_number" placeholder="Optional" />
-                            <Field label="Engine Number" name="engine_number" placeholder="Optional" />
+                            </FormField>
+
+                            <FormField label="Fuel Type" error={errors.fuel_type}>
+                                <select className="field" value={data.fuel_type} onChange={e => setData('fuel_type', e.target.value)}>
+                                    {FUELS.map(f => (
+                                        <option key={f} value={f}>{f.charAt(0).toUpperCase() + f.slice(1)}</option>
+                                    ))}
+                                </select>
+                            </FormField>
+
+                            <FormField label="Insurance Expiry" type="date" error={errors.insurance_expiry}
+                                value={data.insurance_expiry} onChange={e => setData('insurance_expiry', e.target.value)} />
+
+                            <FormField label="PUC / Pollution Expiry" type="date" error={errors.pollution_expiry}
+                                value={data.pollution_expiry} onChange={e => setData('pollution_expiry', e.target.value)} />
+
+                            <FormField label="Fitness Expiry" type="date" error={errors.fitness_expiry}
+                                value={data.fitness_expiry} onChange={e => setData('fitness_expiry', e.target.value)} />
+
                             <div className="sm:col-span-2">
-                                <Field label="Notes" name="notes" placeholder="Optional remarks">
+                                <FormField label="Notes" error={errors.notes}>
                                     <textarea className="field h-16 resize-none" placeholder="Optional remarks"
                                         value={data.notes || ''} onChange={e => setData('notes', e.target.value)} />
-                                </Field>
+                                </FormField>
                             </div>
                         </div>
                     </div>

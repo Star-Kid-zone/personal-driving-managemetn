@@ -1,6 +1,7 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { Car } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
 
 export default function VehicleEdit({ vehicle }) {
     const { data, setData, put, processing, errors } = useForm({
@@ -12,17 +13,6 @@ export default function VehicleEdit({ vehicle }) {
     });
 
     const submit = (e) => { e.preventDefault(); put(route('admin.vehicles.update', vehicle.id)); };
-
-    const Field = ({ label, name, type = 'text', children }) => (
-        <div>
-            <label className="text-xs text-muted mb-1.5 block font-medium">{label}</label>
-            {children || (
-                <input type={type} className={`field ${errors[name] ? 'border-red-500/50' : ''}`}
-                    value={data[name] || ''} onChange={e => setData(name, e.target.value)} />
-            )}
-            {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
-        </div>
-    );
 
     return (
         <AppLayout title={`Edit — ${vehicle.registration_number}`}>
@@ -51,14 +41,21 @@ export default function VehicleEdit({ vehicle }) {
                                     ))}
                                 </div>
                             </div>
-                            <Field label="Insurance Expiry" name="insurance_expiry" type="date" />
-                            <Field label="PUC / Pollution Expiry" name="pollution_expiry" type="date" />
-                            <Field label="Fitness Expiry" name="fitness_expiry" type="date" />
+
+                            <FormField label="Insurance Expiry" type="date" error={errors.insurance_expiry}
+                                value={data.insurance_expiry} onChange={e => setData('insurance_expiry', e.target.value)} />
+
+                            <FormField label="PUC / Pollution Expiry" type="date" error={errors.pollution_expiry}
+                                value={data.pollution_expiry} onChange={e => setData('pollution_expiry', e.target.value)} />
+
+                            <FormField label="Fitness Expiry" type="date" error={errors.fitness_expiry}
+                                value={data.fitness_expiry} onChange={e => setData('fitness_expiry', e.target.value)} />
+
                             <div className="sm:col-span-2">
-                                <Field label="Notes" name="notes">
+                                <FormField label="Notes" error={errors.notes}>
                                     <textarea className="field h-16 resize-none"
                                         value={data.notes || ''} onChange={e => setData('notes', e.target.value)} />
-                                </Field>
+                                </FormField>
                             </div>
                         </div>
                     </div>

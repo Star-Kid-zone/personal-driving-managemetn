@@ -1,37 +1,26 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { User } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
 
 export default function StudentEdit({ student, teachers, vehicles }) {
     const { data, setData, put, processing, errors } = useForm({
-        name:            student.name,
-        phone:           student.phone,
-        alt_phone:       student.alt_phone       || '',
-        email:           student.email           || '',
-        address:         student.address,
-        city:            student.city            || '',
-        pincode:         student.pincode         || '',
-        gender:          student.gender,
-        vehicle_type:    student.vehicle_type,
-        total_sessions:  student.total_sessions,
-        teacher_id:      student.teacher_id      || '',
-        vehicle_id:      student.vehicle_id      || '',
-        status:          student.status,
+        name:           student.name,
+        phone:          student.phone,
+        alt_phone:      student.alt_phone      || '',
+        email:          student.email          || '',
+        address:        student.address,
+        city:           student.city           || '',
+        pincode:        student.pincode        || '',
+        gender:         student.gender,
+        vehicle_type:   student.vehicle_type,
+        total_sessions: student.total_sessions,
+        teacher_id:     student.teacher_id     || '',
+        vehicle_id:     student.vehicle_id     || '',
+        status:         student.status,
     });
 
     const submit = (e) => { e.preventDefault(); put(route('admin.students.update', student.id)); };
-
-    const Field = ({ label, name, type = 'text', placeholder, children }) => (
-        <div>
-            <label className="text-xs text-muted mb-1.5 block font-medium">{label}</label>
-            {children || (
-                <input type={type} className={`field ${errors[name] ? 'border-red-500/50' : ''}`}
-                    placeholder={placeholder} value={data[name] || ''}
-                    onChange={e => setData(name, e.target.value)} />
-            )}
-            {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
-        </div>
-    );
 
     return (
         <AppLayout title={`Edit — ${student.name}`}>
@@ -50,53 +39,72 @@ export default function StudentEdit({ student, teachers, vehicles }) {
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Field label="Full Name" name="name" />
-                            <Field label="Phone" name="phone" />
-                            <Field label="Alt Phone" name="alt_phone" />
-                            <Field label="Email" name="email" type="email" />
+                            <FormField label="Full Name" error={errors.name}
+                                value={data.name} onChange={e => setData('name', e.target.value)} />
+
+                            <FormField label="Phone" error={errors.phone}
+                                value={data.phone} onChange={e => setData('phone', e.target.value)} />
+
+                            <FormField label="Alt Phone" error={errors.alt_phone}
+                                value={data.alt_phone} onChange={e => setData('alt_phone', e.target.value)} />
+
+                            <FormField label="Email" type="email" error={errors.email}
+                                value={data.email} onChange={e => setData('email', e.target.value)} />
+
                             <div className="sm:col-span-2">
-                                <Field label="Address" name="address">
+                                <FormField label="Address" error={errors.address}>
                                     <textarea className="field h-16 resize-none" value={data.address}
                                         onChange={e => setData('address', e.target.value)} />
-                                </Field>
+                                </FormField>
                             </div>
-                            <Field label="City" name="city" />
-                            <Field label="Pincode" name="pincode" />
-                            <Field label="Gender" name="gender">
+
+                            <FormField label="City" error={errors.city}
+                                value={data.city} onChange={e => setData('city', e.target.value)} />
+
+                            <FormField label="Pincode" error={errors.pincode}
+                                value={data.pincode} onChange={e => setData('pincode', e.target.value)} />
+
+                            <FormField label="Gender" error={errors.gender}>
                                 <select className="field" value={data.gender} onChange={e => setData('gender', e.target.value)}>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="other">Other</option>
                                 </select>
-                            </Field>
-                            <Field label="Vehicle Type" name="vehicle_type">
+                            </FormField>
+
+                            <FormField label="Vehicle Type" error={errors.vehicle_type}>
                                 <select className="field" value={data.vehicle_type} onChange={e => setData('vehicle_type', e.target.value)}>
                                     <option value="bike">Bike</option>
                                     <option value="car">Car</option>
                                     <option value="both">Both</option>
                                 </select>
-                            </Field>
-                            <Field label="Total Sessions" name="total_sessions" type="number" />
-                            <Field label="Status" name="status">
+                            </FormField>
+
+                            <FormField label="Total Sessions" type="number" error={errors.total_sessions}
+                                value={data.total_sessions} onChange={e => setData('total_sessions', e.target.value)} />
+
+                            <FormField label="Status" error={errors.status}>
                                 <select className="field" value={data.status} onChange={e => setData('status', e.target.value)}>
                                     <option value="active">Active</option>
                                     <option value="completed">Completed</option>
                                     <option value="on_hold">On Hold</option>
                                     <option value="dropped">Dropped</option>
                                 </select>
-                            </Field>
-                            <Field label="Assign Teacher" name="teacher_id">
+                            </FormField>
+
+                            <FormField label="Assign Teacher" error={errors.teacher_id}>
                                 <select className="field" value={data.teacher_id} onChange={e => setData('teacher_id', e.target.value)}>
                                     <option value="">None</option>
                                     {teachers.map(t => <option key={t.id} value={t.id}>{t.user?.name}</option>)}
                                 </select>
-                            </Field>
-                            <Field label="Assign Vehicle" name="vehicle_id">
+                            </FormField>
+
+                            <FormField label="Assign Vehicle" error={errors.vehicle_id}>
                                 <select className="field" value={data.vehicle_id} onChange={e => setData('vehicle_id', e.target.value)}>
                                     <option value="">None</option>
                                     {vehicles.map(v => <option key={v.id} value={v.id}>{v.make} {v.model} ({v.registration_number})</option>)}
                                 </select>
-                            </Field>
+                            </FormField>
                         </div>
                     </div>
 

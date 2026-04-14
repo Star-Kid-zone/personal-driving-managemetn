@@ -45,7 +45,6 @@ export default function TeacherShow({ teacher }) {
                         { label: 'Total Students', value: teacher.students_count, icon: Users, color: '#6366f1' },
                         { label: 'Active Students', value: teacher.active_students_count, icon: Users, color: '#10b981' },
                         { label: 'Total Trips', value: teacher.trips_count, icon: Route, color: '#D4AF37' },
-                        { label: 'Salary/Month', value: teacher.monthly_salary ? `₹${Number(teacher.monthly_salary).toLocaleString('en-IN')}` : '—', icon: Shield, color: '#06b6d4' },
                     ].map(({ label, value, icon: Icon, color }, i) => (
                         <div key={i} className="stat-widget" data-aos="fade-up" data-aos-delay={i * 75}>
                             <div className="p-2 rounded-lg w-fit mb-3" style={{ background: `${color}18` }}>
@@ -68,20 +67,15 @@ export default function TeacherShow({ teacher }) {
                     <InfoRow label="Date of Birth" value={teacher.date_of_birth} />
                     <InfoRow label="Address" value={teacher.address} />
                     <InfoRow label="Emergency Contact" value={teacher.emergency_contact} />
-                    <InfoRow label="Joined Date" value={teacher.joined_date} />
                 </div>
 
-                {/* License info */}
+                {/* Professional info */}
                 <div className="nm-card p-5" data-aos="fade-up" data-aos-delay="100">
                     <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-                        <Shield size={14} className="text-[#D4AF37]" /> License & Vehicle
+                        <Shield size={14} className="text-[#D4AF37]" /> Professional Details
                     </h3>
                     <InfoRow label="Specialization" value={teacher.specialization} />
-                    <InfoRow label="License Number" value={teacher.license_number} />
-                    <InfoRow label="License Expiry" value={teacher.license_expiry}
-                        highlight={teacher.license_expiry && new Date(teacher.license_expiry) < new Date(Date.now() + 30*86400000)} />
                     <InfoRow label="Aadhaar" value={teacher.aadhaar_number ? '••••' + teacher.aadhaar_number.slice(-4) : null} />
-                    <InfoRow label="Monthly Salary" value={teacher.monthly_salary ? `₹${Number(teacher.monthly_salary).toLocaleString('en-IN')}` : null} highlight />
                 </div>
 
                 {/* Recent students */}

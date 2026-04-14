@@ -33,13 +33,9 @@ class TeacherController extends Controller
             'phone'          => 'required|string|max:15',
             'password'       => 'required|min:8',
             'specialization' => 'required|in:bike,car,both',
-            'license_number' => 'nullable|string',
-            'license_expiry' => 'nullable|date',
             'address'        => 'nullable|string',
             'date_of_birth'  => 'nullable|date',
             'gender'         => 'nullable|in:male,female,other',
-            'monthly_salary' => 'nullable|numeric',
-            'joined_date'    => 'nullable|date',
         ]);
 
         $user = User::create([
@@ -56,13 +52,9 @@ class TeacherController extends Controller
             'user_id'        => $user->id,
             'employee_id'    => sprintf('TCH-%04d', $count),
             'specialization' => $validated['specialization'],
-            'license_number' => $validated['license_number'] ?? null,
-            'license_expiry' => $validated['license_expiry'] ?? null,
             'address'        => $validated['address'] ?? null,
             'date_of_birth'  => $validated['date_of_birth'] ?? null,
             'gender'         => $validated['gender'] ?? null,
-            'monthly_salary' => $validated['monthly_salary'] ?? null,
-            'joined_date'    => $validated['joined_date'] ?? now()->toDateString(),
             'is_active'      => true,
         ]);
 
@@ -93,17 +85,11 @@ class TeacherController extends Controller
             'name'           => 'nullable|string|max:100',
             'phone'          => 'nullable|string|max:15',
             'specialization' => 'nullable|in:bike,car,both',
-            'license_number' => 'nullable|string',
-            'license_expiry' => 'nullable|date',
-            'monthly_salary' => 'nullable|numeric',
             'is_active'      => 'nullable|boolean',
         ]);
 
         $teacher->update(array_filter([
             'specialization' => $validated['specialization'] ?? null,
-            'license_number' => $validated['license_number'] ?? null,
-            'license_expiry' => $validated['license_expiry'] ?? null,
-            'monthly_salary' => $validated['monthly_salary'] ?? null,
             'is_active'      => $validated['is_active'] ?? null,
         ], fn($v) => !is_null($v)));
 

@@ -40,9 +40,6 @@ export default function TeachersIndex({ teachers, filters }) {
                             <div className="flex items-center gap-2 text-xs text-muted capitalize">
                                 <Car size={11} /> {t.specialization}
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-muted">
-                                <Shield size={11} /> {t.license_number || 'No license on file'}
-                            </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 pt-3 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>

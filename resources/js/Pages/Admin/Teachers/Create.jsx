@@ -1,30 +1,16 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { UserPlus } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
 
 export default function TeacherCreate() {
     const { data, setData, post, processing, errors } = useForm({
         name: '', email: '', phone: '', password: '',
-        specialization: 'both', license_number: '', license_expiry: '',
+        specialization: 'both',
         address: '', date_of_birth: '', gender: '',
-        monthly_salary: '', joined_date: new Date().toISOString().slice(0, 10),
     });
 
     const submit = (e) => { e.preventDefault(); post(route('admin.teachers.store')); };
-
-    const Field = ({ label, name, type = 'text', required, placeholder, children }) => (
-        <div>
-            <label className="text-xs text-muted mb-1.5 block font-medium">
-                {label}{required && <span className="text-red-400 ml-0.5">*</span>}
-            </label>
-            {children || (
-                <input type={type} className={`field ${errors[name] ? 'border-red-500/50' : ''}`}
-                    placeholder={placeholder} value={data[name] || ''}
-                    onChange={e => setData(name, e.target.value)} />
-            )}
-            {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
-        </div>
-    );
 
     return (
         <AppLayout title="Add Teacher">
@@ -38,10 +24,21 @@ export default function TeacherCreate() {
                         </h2>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Field label="Full Name" name="name" required placeholder="Teacher full name" />
-                            <Field label="Email" name="email" type="email" required placeholder="teacher@drivemaster.in" />
-                            <Field label="Phone" name="phone" required placeholder="10-digit mobile" />
-                            <Field label="Password" name="password" type="password" required placeholder="Min. 8 characters" />
+                            <FormField label="Full Name" required error={errors.name}
+                                placeholder="Teacher full name" value={data.name}
+                                onChange={e => setData('name', e.target.value)} />
+
+                            <FormField label="Email" type="email" required error={errors.email}
+                                placeholder="teacher@drivemaster.in" value={data.email}
+                                onChange={e => setData('email', e.target.value)} />
+
+                            <FormField label="Phone" required error={errors.phone}
+                                placeholder="10-digit mobile" value={data.phone}
+                                onChange={e => setData('phone', e.target.value)} />
+
+                            <FormField label="Password" type="password" required error={errors.password}
+                                placeholder="Min. 8 characters" value={data.password}
+                                onChange={e => setData('password', e.target.value)} />
 
                             <div className="sm:col-span-2">
                                 <label className="text-xs text-muted mb-2 block font-medium">Specialization *</label>
@@ -59,24 +56,23 @@ export default function TeacherCreate() {
                                 </div>
                             </div>
 
-                            <Field label="License Number" name="license_number" placeholder="TN58 20XXXX" />
-                            <Field label="License Expiry" name="license_expiry" type="date" />
-                            <Field label="Date of Birth" name="date_of_birth" type="date" />
-                            <Field label="Gender" name="gender">
+                            <FormField label="Date of Birth" type="date" error={errors.date_of_birth}
+                                value={data.date_of_birth} onChange={e => setData('date_of_birth', e.target.value)} />
+
+                            <FormField label="Gender" error={errors.gender}>
                                 <select className="field" value={data.gender} onChange={e => setData('gender', e.target.value)}>
                                     <option value="">Select</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
                                     <option value="other">Other</option>
                                 </select>
-                            </Field>
-                            <Field label="Monthly Salary (₹)" name="monthly_salary" type="number" placeholder="e.g. 20000" />
-                            <Field label="Joining Date" name="joined_date" type="date" />
+                            </FormField>
+
                             <div className="sm:col-span-2">
-                                <Field label="Address" name="address" placeholder="Full residential address">
+                                <FormField label="Address" error={errors.address}>
                                     <textarea className="field h-20 resize-none" placeholder="Full residential address"
                                         value={data.address} onChange={e => setData('address', e.target.value)} />
-                                </Field>
+                                </FormField>
                             </div>
                         </div>
                     </div>

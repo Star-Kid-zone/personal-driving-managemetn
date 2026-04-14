@@ -2,6 +2,7 @@ import AppLayout from '@/Layouts/AppLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { BookOpen, CheckCircle, Clock, Calendar, AlertCircle, X, ChevronDown } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
 
 function LlrUpdateModal({ student, llr, onClose }) {
     const { data, setData, put, processing } = useForm({
@@ -25,15 +26,6 @@ function LlrUpdateModal({ student, llr, onClose }) {
         put(route('admin.llr.update', student.id), { onSuccess: onClose });
     };
 
-    const Field = ({ label, name, type = 'text', children }) => (
-        <div>
-            <label className="text-xs text-muted mb-1 block">{label}</label>
-            {children || (
-                <input type={type} className="field" value={data[name] || ''}
-                    onChange={e => setData(name, e.target.value)} />
-            )}
-        </div>
-    );
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -54,17 +46,17 @@ function LlrUpdateModal({ student, llr, onClose }) {
                             Learner Licence (LLR)
                         </div>
 
-                        <Field label="LLR Status" name="llr_status">
+                        <FormField label="LLR Status" error={null}>
                             <select className="field" value={data.llr_status} onChange={e => setData('llr_status', e.target.value)}>
                                 {['not_applied','documents_pending','applied','test_scheduled','passed','failed','expired']
                                     .map(s => <option key={s} value={s}>{s.replace(/_/g,' ')}</option>)}
                             </select>
-                        </Field>
-                        <Field label="LLR Number" name="llr_number" />
-                        <Field label="Applied Date" name="llr_applied_date" type="date" />
-                        <Field label="Test Date" name="llr_test_date" type="date" />
-                        <Field label="Issued Date" name="llr_issued_date" type="date" />
-                        <Field label="Expiry Date" name="llr_expiry_date" type="date" />
+                        </FormField>
+                        <FormField label="LLR Number" error={null} value={data.llr_number || ''} onChange={e => setData('llr_number', e.target.value)} />
+                        <FormField label="Applied Date" type="date" error={null} value={data.llr_applied_date || ''} onChange={e => setData('llr_applied_date', e.target.value)} />
+                        <FormField label="Test Date" type="date" error={null} value={data.llr_test_date || ''} onChange={e => setData('llr_test_date', e.target.value)} />
+                        <FormField label="Issued Date" type="date" error={null} value={data.llr_issued_date || ''} onChange={e => setData('llr_issued_date', e.target.value)} />
+                        <FormField label="Expiry Date" type="date" error={null} value={data.llr_expiry_date || ''} onChange={e => setData('llr_expiry_date', e.target.value)} />
 
                         {data.llr_issued_date && (
                             <div className="sm:col-span-2 p-3 rounded-xl flex items-center gap-2"
@@ -82,22 +74,22 @@ function LlrUpdateModal({ student, llr, onClose }) {
                             Driving Licence (DL)
                         </div>
 
-                        <Field label="DL Status" name="dl_status">
+                        <FormField label="DL Status" error={null}>
                             <select className="field" value={data.dl_status} onChange={e => setData('dl_status', e.target.value)}>
                                 {['not_applied','waiting_period','documents_pending','applied','test_scheduled','passed','failed','issued']
                                     .map(s => <option key={s} value={s}>{s.replace(/_/g,' ')}</option>)}
                             </select>
-                        </Field>
-                        <Field label="DL Number" name="dl_number" />
-                        <Field label="DL Applied Date" name="dl_applied_date" type="date" />
-                        <Field label="DL Test Date" name="dl_test_date" type="date" />
-                        <Field label="DL Issued Date" name="dl_issued_date" type="date" />
-                        <Field label="RTO Office" name="rto_office" />
+                        </FormField>
+                        <FormField label="DL Number" error={null} value={data.dl_number || ''} onChange={e => setData('dl_number', e.target.value)} />
+                        <FormField label="DL Applied Date" type="date" error={null} value={data.dl_applied_date || ''} onChange={e => setData('dl_applied_date', e.target.value)} />
+                        <FormField label="DL Test Date" type="date" error={null} value={data.dl_test_date || ''} onChange={e => setData('dl_test_date', e.target.value)} />
+                        <FormField label="DL Issued Date" type="date" error={null} value={data.dl_issued_date || ''} onChange={e => setData('dl_issued_date', e.target.value)} />
+                        <FormField label="RTO Office" error={null} value={data.rto_office || ''} onChange={e => setData('rto_office', e.target.value)} />
                         <div className="sm:col-span-2">
-                            <Field label="Notes" name="notes">
+                            <FormField label="Notes" error={null}>
                                 <textarea className="field h-16 resize-none" value={data.notes || ''}
                                     onChange={e => setData('notes', e.target.value)} />
-                            </Field>
+                            </FormField>
                         </div>
                     </div>
 

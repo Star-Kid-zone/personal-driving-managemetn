@@ -1,7 +1,8 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import { User, Phone, MapPin, Calendar, Car, CreditCard, Upload, ChevronRight, ChevronLeft } from 'lucide-react';
+import { User, Car, CreditCard, Upload, ChevronRight, ChevronLeft } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
 
 const STEPS = ['Personal Info', 'Vehicle & Sessions', 'Payment', 'Documents'];
 
@@ -18,21 +19,6 @@ export default function CreateStudent({ teachers, vehicles }) {
     });
 
     const submit = (e) => { e.preventDefault(); post(route('admin.students.store')); };
-
-    const Field = ({ label, name, type = 'text', required, placeholder, children }) => (
-        <div>
-            <label className="block text-xs text-muted mb-1.5 font-medium">
-                {label}{required && <span className="text-red-400 ml-0.5">*</span>}
-            </label>
-            {children || (
-                <input type={type} className={`field ${errors[name] ? 'border-red-500/50' : ''}`}
-                    placeholder={placeholder} value={data[name]}
-                    onChange={e => setData(name, e.target.value)} />
-            )}
-            {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
-        </div>
-    );
-
     const feeMap = { bike: 2500, car: 4000, both: 6500 };
 
     return (
@@ -64,32 +50,54 @@ export default function CreateStudent({ teachers, vehicles }) {
                                     <User size={18} className="text-[#D4AF37]" /> Personal Information
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <Field label="Full Name" name="name" required placeholder="Student full name" />
-                                    <Field label="Phone Number" name="phone" required placeholder="10-digit mobile">
+                                    <FormField label="Full Name" required error={errors.name}
+                                        placeholder="Student full name" value={data.name}
+                                        onChange={e => setData('name', e.target.value)} />
+
+                                    <FormField label="Phone Number" required error={errors.phone}>
                                         <input type="tel" className={`field ${errors.phone ? 'border-red-500/50' : ''}`}
                                             placeholder="9876543210" value={data.phone}
                                             onChange={e => setData('phone', e.target.value)} maxLength={10} />
-                                    </Field>
-                                    <Field label="Alternate Phone" name="alt_phone" placeholder="Optional" />
-                                    <Field label="Email" name="email" type="email" placeholder="Optional" />
-                                    <Field label="Date of Birth" name="date_of_birth" type="date" required />
-                                    <Field label="Gender" name="gender" required>
+                                    </FormField>
+
+                                    <FormField label="Alternate Phone" error={errors.alt_phone}
+                                        placeholder="Optional" value={data.alt_phone}
+                                        onChange={e => setData('alt_phone', e.target.value)} />
+
+                                    <FormField label="Email" type="email" error={errors.email}
+                                        placeholder="Optional" value={data.email}
+                                        onChange={e => setData('email', e.target.value)} />
+
+                                    <FormField label="Date of Birth" type="date" required error={errors.date_of_birth}
+                                        value={data.date_of_birth} onChange={e => setData('date_of_birth', e.target.value)} />
+
+                                    <FormField label="Gender" required error={errors.gender}>
                                         <select className="field" value={data.gender} onChange={e => setData('gender', e.target.value)}>
                                             <option value="">Select gender</option>
                                             <option value="male">Male</option>
                                             <option value="female">Female</option>
                                             <option value="other">Other</option>
                                         </select>
-                                    </Field>
+                                    </FormField>
+
                                     <div className="sm:col-span-2">
-                                        <Field label="Address" name="address" required>
+                                        <FormField label="Address" required error={errors.address}>
                                             <textarea className="field h-20 resize-none" placeholder="Full address..."
                                                 value={data.address} onChange={e => setData('address', e.target.value)} />
-                                        </Field>
+                                        </FormField>
                                     </div>
-                                    <Field label="City" name="city" placeholder="Chennai" />
-                                    <Field label="Pincode" name="pincode" placeholder="600001" />
-                                    <Field label="Aadhaar Number" name="aadhaar_number" placeholder="12 digits (optional)" />
+
+                                    <FormField label="City" error={errors.city}
+                                        placeholder="Chennai" value={data.city}
+                                        onChange={e => setData('city', e.target.value)} />
+
+                                    <FormField label="Pincode" error={errors.pincode}
+                                        placeholder="600001" value={data.pincode}
+                                        onChange={e => setData('pincode', e.target.value)} />
+
+                                    <FormField label="Aadhaar Number" error={errors.aadhaar_number}
+                                        placeholder="12 digits (optional)" value={data.aadhaar_number}
+                                        onChange={e => setData('aadhaar_number', e.target.value)} />
                                 </div>
                             </div>
                         )}
@@ -117,24 +125,29 @@ export default function CreateStudent({ teachers, vehicles }) {
                                             ))}
                                         </div>
                                     </div>
-                                    <Field label="Assign Teacher" name="teacher_id">
+
+                                    <FormField label="Assign Teacher" error={errors.teacher_id}>
                                         <select className="field" value={data.teacher_id} onChange={e => setData('teacher_id', e.target.value)}>
                                             <option value="">Auto-assign</option>
                                             {teachers.map(t => <option key={t.id} value={t.id}>{t.user?.name} ({t.specialization})</option>)}
                                         </select>
-                                    </Field>
-                                    <Field label="Assign Vehicle" name="vehicle_id">
+                                    </FormField>
+
+                                    <FormField label="Assign Vehicle" error={errors.vehicle_id}>
                                         <select className="field" value={data.vehicle_id} onChange={e => setData('vehicle_id', e.target.value)}>
                                             <option value="">Auto-assign</option>
                                             {vehicles.filter(v => data.vehicle_type === 'both' || v.type === data.vehicle_type)
                                                 .map(v => <option key={v.id} value={v.id}>{v.make} {v.model} ({v.registration_number})</option>)}
                                         </select>
-                                    </Field>
-                                    <Field label="Total Sessions" name="total_sessions" required>
+                                    </FormField>
+
+                                    <FormField label="Total Sessions" required error={errors.total_sessions}>
                                         <input type="number" className="field" min="5" max="100"
                                             value={data.total_sessions} onChange={e => setData('total_sessions', e.target.value)} />
-                                    </Field>
-                                    <Field label="Enrollment Date" name="enrollment_date" type="date" required />
+                                    </FormField>
+
+                                    <FormField label="Enrollment Date" type="date" required error={errors.enrollment_date}
+                                        value={data.enrollment_date} onChange={e => setData('enrollment_date', e.target.value)} />
                                 </div>
                             </div>
                         )}
@@ -146,22 +159,25 @@ export default function CreateStudent({ teachers, vehicles }) {
                                     <CreditCard size={18} className="text-[#D4AF37]" /> Payment Details
                                 </h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <Field label="Total Course Fee (₹)" name="total_fee" required>
+                                    <FormField label="Total Course Fee (₹)" required error={errors.total_fee}>
                                         <input type="number" className="field" placeholder="e.g. 4000"
                                             value={data.total_fee} onChange={e => setData('total_fee', e.target.value)} />
-                                    </Field>
-                                    <Field label="Amount Paid Now (₹)" name="amount_paid">
+                                    </FormField>
+
+                                    <FormField label="Amount Paid Now (₹)" error={errors.amount_paid}>
                                         <input type="number" className="field" placeholder="0"
                                             value={data.amount_paid} onChange={e => setData('amount_paid', e.target.value)} />
-                                    </Field>
-                                    <Field label="Payment Type" name="payment_type" required>
+                                    </FormField>
+
+                                    <FormField label="Payment Type" required error={errors.payment_type}>
                                         <select className="field" value={data.payment_type} onChange={e => setData('payment_type', e.target.value)}>
                                             <option value="full">Full Payment</option>
                                             <option value="half">Half Payment</option>
                                             <option value="partial">Partial Payment</option>
                                         </select>
-                                    </Field>
-                                    <Field label="Payment Mode" name="payment_mode" required>
+                                    </FormField>
+
+                                    <FormField label="Payment Mode" required error={errors.payment_mode}>
                                         <select className="field" value={data.payment_mode} onChange={e => setData('payment_mode', e.target.value)}>
                                             <option value="cash">Cash</option>
                                             <option value="upi">UPI</option>
@@ -169,10 +185,9 @@ export default function CreateStudent({ teachers, vehicles }) {
                                             <option value="bank_transfer">Bank Transfer</option>
                                             <option value="cheque">Cheque</option>
                                         </select>
-                                    </Field>
+                                    </FormField>
                                 </div>
 
-                                {/* Summary box */}
                                 {data.total_fee && (
                                     <div className="p-4 rounded-xl mt-2" style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.2)' }}>
                                         <div className="text-xs text-muted mb-3 uppercase tracking-wider">Payment Summary</div>

@@ -1,33 +1,17 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, useForm } from '@inertiajs/react';
 import { Edit } from 'lucide-react';
+import FormField from '@/Components/UI/FormField';
 
 export default function TeacherEdit({ teacher }) {
     const { data, setData, put, processing, errors } = useForm({
-        name:            teacher.user?.name         || '',
-        phone:           teacher.user?.phone        || '',
-        specialization:  teacher.specialization     || 'both',
-        license_number:  teacher.license_number     || '',
-        license_expiry:  teacher.license_expiry     || '',
-        monthly_salary:  teacher.monthly_salary     || '',
-        is_active:       teacher.is_active          ?? true,
+        name:           teacher.user?.name        || '',
+        phone:          teacher.user?.phone       || '',
+        specialization: teacher.specialization    || 'both',
+        is_active:      teacher.is_active         ?? true,
     });
 
-    const submit = (e) => {
-        e.preventDefault();
-        put(route('admin.teachers.update', teacher.id));
-    };
-
-    const Field = ({ label, name, type = 'text', children }) => (
-        <div>
-            <label className="text-xs text-muted mb-1.5 block font-medium">{label}</label>
-            {children || (
-                <input type={type} className={`field ${errors[name] ? 'border-red-500/50' : ''}`}
-                    value={data[name] || ''} onChange={e => setData(name, e.target.value)} />
-            )}
-            {errors[name] && <p className="text-red-400 text-xs mt-1">{errors[name]}</p>}
-        </div>
-    );
+    const submit = (e) => { e.preventDefault(); put(route('admin.teachers.update', teacher.id)); };
 
     return (
         <AppLayout title={`Edit — ${teacher.user?.name}`}>
@@ -41,8 +25,11 @@ export default function TeacherEdit({ teacher }) {
                         </h2>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Field label="Full Name" name="name" />
-                            <Field label="Phone" name="phone" />
+                            <FormField label="Full Name" error={errors.name}
+                                value={data.name} onChange={e => setData('name', e.target.value)} />
+
+                            <FormField label="Phone" error={errors.phone}
+                                value={data.phone} onChange={e => setData('phone', e.target.value)} />
 
                             <div className="sm:col-span-2">
                                 <label className="text-xs text-muted mb-2 block font-medium">Specialization</label>
@@ -60,18 +47,15 @@ export default function TeacherEdit({ teacher }) {
                                 </div>
                             </div>
 
-                            <Field label="License Number" name="license_number" />
-                            <Field label="License Expiry" name="license_expiry" type="date" />
-                            <Field label="Monthly Salary (₹)" name="monthly_salary" type="number" />
-
-                            <div>
+                            <div className="sm:col-span-2">
                                 <label className="text-xs text-muted mb-1.5 block font-medium">Status</label>
                                 <div className="flex gap-3">
                                     {[true, false].map(v => (
                                         <button type="button" key={v.toString()} onClick={() => setData('is_active', v)}
                                             className={`flex-1 py-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
                                                 data.is_active === v
-                                                    ? v ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' : 'border-red-500 bg-red-500/10 text-red-400'
+                                                    ? v ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400'
+                                                        : 'border-red-500 bg-red-500/10 text-red-400'
                                                     : 'border-white/10 text-muted'
                                             }`}>
                                             {v ? 'Active' : 'Inactive'}
