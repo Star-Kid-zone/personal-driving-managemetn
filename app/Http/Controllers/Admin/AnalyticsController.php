@@ -51,7 +51,7 @@ class AnalyticsController extends Controller
             ->withCount([
                 'students',
                 'students as active_students_count' => fn($q) => $q->where('status','active'),
-                'trips as completed_trips_count'    => fn($q) => $q->where('status','completed'),
+                'trips as completed_trips_count'    => fn($q) => $q->whereNotNull('end_time'),
             ])
             ->where('is_active', true)
             ->orderByDesc('students_count')

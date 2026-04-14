@@ -17,16 +17,7 @@ export default function TeacherTripsIndex({ trips, filters }) {
                 </Link>
             </div>
 
-            {/* Filter tabs */}
-            <div className="flex gap-1 p-1 rounded-xl w-fit mb-4" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                {['', 'scheduled', 'completed'].map(s => (
-                    <button key={s}
-                        onClick={() => router.get(route('teacher.trips.index'), { ...filters, status: s }, { preserveState: true, replace: true })}
-                        className={`px-4 py-2 rounded-lg text-xs font-medium transition-all capitalize ${
-                            (filters?.status || '') === s ? 'bg-[#D4AF37] text-[#0a0a1a]' : 'text-muted hover:text-white'
-                        }`}>{s || 'All'}</button>
-                ))}
-            </div>
+
 
             <div className="nm-card overflow-hidden" data-aos="fade-up">
                 <div className="overflow-x-auto">
@@ -38,7 +29,6 @@ export default function TeacherTripsIndex({ trips, filters }) {
                                 <th>Date & Time</th>
                                 <th>Type</th>
                                 <th>Students</th>
-                                <th>Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -60,11 +50,7 @@ export default function TeacherTripsIndex({ trips, filters }) {
                                             <Users size={13} className="text-muted" /> {t.students_count}
                                         </div>
                                     </td>
-                                    <td>
-                                        <span className={t.status === 'completed' ? 'badge-active' : t.status === 'scheduled' ? 'badge-pending' : 'badge-danger'}>
-                                            {t.status}
-                                        </span>
-                                    </td>
+
                                     <td>
                                         <Link href={route('teacher.trips.show', t.id)}
                                             className="p-1.5 rounded-lg text-muted hover:text-[#D4AF37] hover:bg-white/5 transition-colors inline-flex">

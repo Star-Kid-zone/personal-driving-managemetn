@@ -39,6 +39,6 @@ class Teacher extends Model
 
     public function getTotalTripsCountAttribute(): int
     {
-        return $this->trips()->where('status', 'completed')->count();
+        return $this->trips()->whereNotNull('end_time')->count();
     }
 }

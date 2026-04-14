@@ -18,12 +18,12 @@ class TripController extends Controller
     public function index(Request $request): Response
     {
         $teacher = auth()->user()->teacher;
-        $filters = array_merge($request->only(['date', 'status']), ['teacher_id' => $teacher->id]);
+        $filters = array_merge($request->only(['date']), ['teacher_id' => $teacher->id]);
         $trips   = $this->tripService->list($filters);
 
         return Inertia::render('Teacher/Trips/Index', [
             'trips'   => $trips,
-            'filters' => $request->only(['date', 'status']),
+            'filters' => $request->only(['date']),
         ]);
     }
 
@@ -32,8 +32,7 @@ class TripController extends Controller
         $teacher  = auth()->user()->teacher;
         $vehicles = Vehicle::active()->where('type', $teacher->specialization === 'both' ? '!=' : $teacher->specialization)->get();
         $allVehicles = Vehicle::active()->get();
-        $students = Student::where('teacher_id', $teacher->id)
-            ->where('status', 'active')
+        $students = Student::active()
             ->whereColumn('completed_sessions', '<', 'total_sessions')
             ->get();
 

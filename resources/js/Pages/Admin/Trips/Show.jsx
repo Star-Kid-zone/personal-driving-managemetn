@@ -4,6 +4,20 @@ import { useState } from 'react';
 import { CheckCircle, XCircle, Route, Users, Clock, Car } from 'lucide-react';
 
 export default function TripShow({ trip }) {
+    const formatDate = (dateString) => {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    };
+
+    const formatTime = (timeString) => {
+        if (!timeString) return '—';
+        const [hour, minute] = timeString.split(':');
+        const h = parseInt(hour, 10);
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const hours = h % 12 || 12;
+        return `${hours}:${minute} ${ampm}`;
+    };
     const [attendance, setAttendance] = useState(() => {
         const init = {};
         (trip.trip_students || []).forEach(ts => {
@@ -43,14 +57,14 @@ export default function TripShow({ trip }) {
                     <div>
                         <h1 className="text-xl font-bold text-white">{trip.trip_number}</h1>
                         <div className="flex items-center gap-3 mt-1">
-                            <span className={trip.status === 'completed' ? 'badge-active' : trip.status === 'scheduled' ? 'badge-pending' : 'badge-danger'}>
-                                {trip.status?.replace('_', ' ')}
+                            <span className={trip.end_time ? 'badge-active' : 'badge-pending'}>
+                                {trip.end_time ? 'Completed' : 'Scheduled'}
                             </span>
                             <span className="text-muted text-xs capitalize">{trip.vehicle_type} trip</span>
                         </div>
                     </div>
                 </div>
-                {trip.status === 'scheduled' && (
+                {!trip.end_time && (
                     <button onClick={completeTrip} disabled={completing}
                         className="btn-gold flex items-center gap-2">
                         <CheckCircle size={16} />
@@ -69,9 +83,9 @@ export default function TripShow({ trip }) {
                         { label: 'Teacher', value: trip.teacher?.user?.name },
                         { label: 'Vehicle', value: `${trip.vehicle?.make} ${trip.vehicle?.model}` },
                         { label: 'Reg. No', value: trip.vehicle?.registration_number },
-                        { label: 'Date', value: trip.trip_date },
-                        { label: 'Start Time', value: trip.start_time },
-                        { label: 'End Time', value: trip.end_time || '—' },
+                        { label: 'Date', value: formatDate(trip.trip_date) },
+                        { label: 'Start Time', value: formatTime(trip.start_time) },
+                        { label: 'End Time', value: trip.end_time ? formatTime(trip.end_time) : '—' },
                         { label: 'Distance', value: trip.distance_km ? `${trip.distance_km} km` : '—' },
                         { label: 'Route', value: trip.route_description || '—' },
                     ].map(({ label, value }) => (
@@ -106,7 +120,7 @@ export default function TripShow({ trip }) {
                                     </div>
 
                                     {/* Skill rating */}
-                                    {trip.status === 'scheduled' && (
+                                    {!trip.end_time && (
                                         <select
                                             className="text-xs rounded-lg px-2 py-1.5 bg-white/5 border border-white/10 text-muted"
                                             value={attendance[ts.student_id]?.skill_rating || ''}
@@ -119,7 +133,7 @@ export default function TripShow({ trip }) {
                                         </select>
                                     )}
 
-                                    {trip.status === 'scheduled' ? (
+                                    {!trip.end_time ? (
                                         <button onClick={() => toggleAttendance(ts.student_id)}
                                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                                                 attended
@@ -138,7 +152,7 @@ export default function TripShow({ trip }) {
                         })}
                     </div>
 
-                    {trip.status === 'scheduled' && (
+                    {!trip.end_time && (
                         <div className="mt-4 p-3 rounded-xl text-xs text-muted flex items-center gap-2"
                             style={{ background: 'rgba(212,175,55,0.06)', border: '1px solid rgba(212,175,55,0.15)' }}>
                             <Clock size={13} className="text-[#D4AF37]" />

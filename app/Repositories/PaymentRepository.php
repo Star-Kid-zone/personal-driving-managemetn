@@ -41,7 +41,13 @@ class PaymentRepository implements PaymentRepositoryInterface
             $transaction = $this->transactionModel->create($data);
             $payment     = $this->model->findOrFail($data['payment_id']);
             $payment->increment('amount_paid', $data['amount']);
-            $payment->updateStatus();
+            
+            if (isset($data['payment_status'])) {
+                $payment->update(['payment_status' => $data['payment_status']]);
+            } else {
+                $payment->updateStatus();
+            }
+            
             return $transaction;
         });
     }

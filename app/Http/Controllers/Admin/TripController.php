@@ -17,29 +17,27 @@ class TripController extends Controller
 
     public function index(Request $request): \Inertia\Response
     {
-        $trips    = $this->tripService->list($request->only(['teacher_id', 'date', 'status', 'vehicle_type']));
+        $trips    = $this->tripService->list($request->only(['teacher_id', 'date', 'vehicle_type']));
         $teachers = Teacher::with('user')->where('is_active', true)->get();
 
         return Inertia::render('Admin/Trips/Index', [
             'trips'    => $trips,
             'teachers' => $teachers,
-            'filters'  => $request->only(['teacher_id', 'date', 'status']),
+            'filters'  => $request->only(['teacher_id', 'date']),
         ]);
     }
 
     public function create(): \Inertia\Response
     {
-        $teachers = Teacher::with('user')->where('is_active', true)->get();
         $vehicles = Vehicle::active()->get();
         $students = Student::active()->get();
 
-        return Inertia::render('Admin/Trips/Create', compact('teachers', 'vehicles', 'students'));
+        return Inertia::render('Admin/Trips/Create', compact('vehicles', 'students'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'teacher_id'   => 'required|exists:teachers,id',
             'vehicle_id'   => 'required|exists:vehicles,id',
             'trip_date'    => 'required|date',
             'start_time'   => 'required',
@@ -48,7 +46,21 @@ class TripController extends Controller
             'student_ids.*'=> 'exists:students,id',
         ]);
 
-        $trip = $this->tripService->create($request->all());
+        $data = $request->all();
+        
+        // Ensure the admin has a teacher profile to link the trip
+        $teacher = auth()->user()->teacher ?: \App\Models\Teacher::firstOrCreate(
+            ['user_id' => auth()->id()],
+            [
+                'employee_id' => 'ADMIN-' . auth()->id(),
+                'specialization' => 'both',
+                'is_active' => true
+            ]
+        );
+        
+        $data['teacher_id'] = $teacher->id;
+
+        $trip = $this->tripService->create($data);
 
         return redirect()->route('admin.trips.show', $trip->id)
             ->with('success', "Trip {$trip->trip_number} created successfully.");

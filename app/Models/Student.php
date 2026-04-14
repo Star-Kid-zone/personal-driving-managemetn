@@ -24,7 +24,7 @@ class Student extends Model
         'status', 'access_token',
     ];
 
-    protected $appends = ['age'];
+    protected $appends = ['age', 'remaining_sessions', 'progress_percentage'];
 
     protected function casts(): array
     {

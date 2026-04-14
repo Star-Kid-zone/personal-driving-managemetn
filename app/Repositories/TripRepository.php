@@ -26,9 +26,7 @@ class TripRepository implements TripRepositoryInterface
         if (!empty($filters['date'])) {
             $query->whereDate('trip_date', $filters['date']);
         }
-        if (!empty($filters['status'])) {
-            $query->where('status', $filters['status']);
-        }
+
         if (!empty($filters['vehicle_type'])) {
             $query->where('vehicle_type', $filters['vehicle_type']);
         }
@@ -87,7 +85,7 @@ class TripRepository implements TripRepositoryInterface
                 }
             }
 
-            $trip->update(['status' => 'completed']);
+            $trip->update(['end_time' => now()]);
             return $trip->fresh();
         });
     }

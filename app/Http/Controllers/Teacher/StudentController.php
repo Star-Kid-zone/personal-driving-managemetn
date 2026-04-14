@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Teacher;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollStudentRequest;
+use App\Http\Requests\UpdateStudentRequest;
 use App\Services\StudentService;
 use App\Services\LlrService;
 use App\Services\PaymentService;
@@ -26,12 +27,12 @@ class StudentController extends Controller
     public function index(Request $request): Response
     {
         $teacher  = auth()->user()->teacher;
-        $filters  = $request->only(['search', 'status']);
+        $filters  = $request->only(['search', 'status', 'vehicle_type']);
         $students = $this->studentService->list($filters);
 
         return Inertia::render('Teacher/Students/Index', [
             'students' => $students,
-            'filters'  => $request->only(['search', 'status']),
+            'filters'  => $request->only(['search', 'status', 'vehicle_type']),
         ]);
     }
 
@@ -55,9 +56,24 @@ class StudentController extends Controller
         return Inertia::render('Teacher/Students/Show', compact('student'));
     }
 
+    public function edit(int $id): Response
+    {
+        $student  = $this->studentService->findById($id);
+
+        return Inertia::render('Teacher/Students/Edit', compact('student'));
+    }
+
+    public function update(UpdateStudentRequest $request, int $id): RedirectResponse
+    {
+        $this->studentService->update($id, $request->validated());
+
+        return redirect()->route('teacher.students.show', $id)
+            ->with('success', 'Student updated successfully.');
+    }
+
     public function updateLlr(Request $request, int $id): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'llr_status'       => 'required|string',
             'llr_applied_date' => 'nullable|date',
             'llr_test_date'    => 'nullable|date',
@@ -68,14 +84,14 @@ class StudentController extends Controller
             'rto_office'       => 'nullable|string',
         ]);
 
-        $this->llrService->updateLlrRecord($id, $request->validated());
+        $this->llrService->updateLlrRecord($id, $validated);
 
         return back()->with('success', 'LLR/DL record updated successfully.');
     }
 
     public function recordPayment(Request $request, int $id): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'amount'       => 'required|numeric|min:1',
             'payment_mode' => 'required|in:cash,upi,card,bank_transfer,cheque',
             'paid_on'      => 'required|date',
@@ -90,7 +106,7 @@ class StudentController extends Controller
         }
 
         $this->paymentService->recordPayment($payment->id, array_merge(
-            $request->validated(),
+            $validated,
             ['student_id' => $id]
         ));
 
@@ -107,14 +123,9 @@ class StudentController extends Controller
     {
         $teacher  = auth()->user()->teacher;
         
-        $hasTeacherTrips = fn($student) => $student->trips->contains(fn($ts) => $ts->trip && $ts->trip->teacher_id === $teacher->id);
-
-        $awaiting = $this->llrService->getStudentsAwaitingLlr()
-            ->filter(fn($r) => $hasTeacherTrips($r->student));
-        $eligible = $this->llrService->getDlEligibleStudents()
-            ->filter(fn($r) => $hasTeacherTrips($r->student));
-        $tests    = $this->llrService->getUpcomingTests()
-            ->filter(fn($r) => $hasTeacherTrips($r->student));
+        $awaiting = $this->llrService->getStudentsAwaitingLlr();
+        $eligible = $this->llrService->getDlEligibleStudents();
+        $tests    = $this->llrService->getUpcomingTests();
 
         return Inertia::render('Teacher/LlrTracking', [
             'awaiting' => $awaiting->values(),

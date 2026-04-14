@@ -3,9 +3,14 @@ import { Head, useForm } from '@inertiajs/react';
 import { Route, Check } from 'lucide-react';
 
 export default function TeacherTripCreate({ vehicles, students }) {
+    const d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    const defaultDate = d.toISOString().slice(0, 10);
+    const defaultTime = d.toISOString().slice(11, 16);
+
     const { data, setData, post, processing, errors } = useForm({
-        vehicle_id: '', trip_date: '',
-        start_time: '', vehicle_type: 'car',
+        vehicle_id: '', trip_date: defaultDate,
+        start_time: defaultTime, vehicle_type: 'car',
         student_ids: [], notes: '',
     });
 
@@ -86,7 +91,7 @@ export default function TeacherTripCreate({ vehicles, students }) {
                         <div>
                             <div className="flex items-center justify-between mb-2">
                                 <label className="text-xs text-muted font-medium">
-                                    Assign Students * <span className="text-[#D4AF37]">({data.student_ids.length} selected)</span>
+                                    Select Students * <span className="text-[#D4AF37]">({data.student_ids.length} selected)</span>
                                 </label>
                                 {errors.student_ids && <p className="text-red-400 text-xs">{errors.student_ids}</p>}
                             </div>

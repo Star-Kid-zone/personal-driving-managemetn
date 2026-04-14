@@ -16,7 +16,7 @@ class Trip extends Model
     protected $fillable = [
         'trip_number', 'teacher_id', 'vehicle_id', 'trip_date',
         'start_time', 'end_time', 'vehicle_type', 'route_description',
-        'distance_km', 'status', 'notes',
+        'distance_km', 'notes',
     ];
 
     protected function casts(): array
@@ -50,7 +50,7 @@ class Trip extends Model
 
     public function scopeCompleted($query)
     {
-        return $query->where('status', 'completed');
+        return $query->whereNotNull('end_time');
     }
 
     public function scopeToday($query)

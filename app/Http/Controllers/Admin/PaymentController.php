@@ -26,15 +26,16 @@ class PaymentController extends Controller
 
     public function record(Request $request, Payment $payment): RedirectResponse
     {
-        $request->validate([
-            'amount'       => 'required|numeric|min:1',
-            'payment_mode' => 'required|in:cash,upi,card,bank_transfer,cheque',
-            'paid_on'      => 'required|date',
-            'notes'        => 'nullable|string',
+        $validated = $request->validate([
+            'amount'         => 'required|numeric|min:1|max:' . $payment->balance_due,
+            'payment_mode'   => 'required|in:cash,upi,card,bank_transfer,cheque',
+            'paid_on'        => 'required|date',
+            'notes'          => 'nullable|string',
+            'payment_status' => 'required|in:pending,partial,paid',
         ]);
 
         $this->paymentService->recordPayment($payment->id, array_merge(
-            $request->validated(),
+            $validated,
             ['student_id' => $payment->student_id]
         ));
 

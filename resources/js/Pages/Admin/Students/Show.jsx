@@ -141,8 +141,8 @@ export default function StudentShow({ student }) {
                         <InfoRow label="City" value={`${student.city} ${student.pincode ? '- ' + student.pincode : ''}`} />
                     </Section>
 
-                    <Section title="Assignment" icon={Car}>
-                        <InfoRow label="Enrolled" value={formatDate(student.enrollment_date)} />
+                    <Section title="Enrollment Details" icon={Car}>
+                         <InfoRow label="Enrolled" value={formatDate(student.enrollment_date)} />
                     </Section>
                 </div>
 

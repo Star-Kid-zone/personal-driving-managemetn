@@ -43,12 +43,12 @@ class DashboardService
               ->orWhere('dl_test_date', '>=', now());
         })->with('student')->orderByRaw('COALESCE(llr_test_date, dl_test_date)')->limit(5)->get();
 
-        $recentStudents = Student::with(['teacher.user', 'payment'])
+        $recentStudents = Student::with(['payment'])
             ->latest()->limit(5)->get();
 
         $teacherStats = Teacher::with('user')
             ->withCount([
-                'trips as completed_trips_count'    => fn($q) => $q->where('status', 'completed'),
+                'trips as completed_trips_count'    => fn($q) => $q->whereNotNull('end_time'),
             ])
             ->where('is_active', true)->get();
 
@@ -65,7 +65,7 @@ class DashboardService
         $myStudents     = Student::whereHas('trips.trip', fn($q) => $q->where('teacher_id', $teacherId))->count();
         $activeStudents = Student::whereHas('trips.trip', fn($q) => $q->where('teacher_id', $teacherId))->where('status', 'active')->count();
         $todaysTrips    = Trip::where('teacher_id', $teacherId)->whereDate('trip_date', today())->count();
-        $totalTrips     = Trip::where('teacher_id', $teacherId)->where('status', 'completed')->count();
+        $totalTrips     = Trip::where('teacher_id', $teacherId)->whereNotNull('end_time')->count();
 
         $llrPending = LlrRecord::whereHas('student.trips.trip', fn($q) => $q->where('teacher_id', $teacherId))
             ->where('llr_status', 'not_applied')->count();

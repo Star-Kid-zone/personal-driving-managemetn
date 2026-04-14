@@ -90,8 +90,8 @@ export default function TeacherDashboard({
                                     <div className="text-sm text-white font-medium">{trip.trip_number}</div>
                                     <div className="text-xs text-muted">{trip.start_time} · {trip.vehicle?.make} {trip.vehicle?.model} · {trip.students_count} students</div>
                                 </div>
-                                <span className={`text-xs px-2 py-0.5 rounded-full ${trip.status === 'completed' ? 'badge-active' : trip.status === 'in_progress' ? 'badge-pending' : 'badge-pending'}`}>
-                                    {trip.status}
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${trip.end_time ? 'badge-active' : 'badge-pending'}`}>
+                                    {trip.end_time ? 'Completed' : 'Scheduled'}
                                 </span>
                             </Link>
                         ))}

@@ -24,7 +24,6 @@ class TripService
     public function create(array $data): Trip
     {
         $data['trip_number'] = $this->tripRepo->generateTripNumber();
-        $data['status']      = 'scheduled';
         $trip = $this->tripRepo->create($data);
 
         if (!empty($data['student_ids'])) {

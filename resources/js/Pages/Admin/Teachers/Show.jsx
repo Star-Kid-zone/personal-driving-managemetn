@@ -103,7 +103,7 @@ export default function TeacherShow({ teacher }) {
                             </Link>
                         ))}
                         {teacher.students?.length === 0 && (
-                            <div className="text-center py-4 text-muted text-xs">No students assigned</div>
+                            <div className="text-center py-4 text-muted text-xs">No students trained yet</div>
                         )}
                     </div>
                 </div>

@@ -1,14 +1,15 @@
 import AppLayout from '@/Layouts/AppLayout';
 import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
-import { Plus, Search, Eye, AlertCircle } from 'lucide-react';
+import { Plus, Search, Eye, AlertCircle, Edit, Filter } from 'lucide-react';
 
 export default function TeacherStudentsIndex({ students, filters }) {
     const [search, setSearch] = useState(filters?.search || '');
     const [status, setStatus] = useState(filters?.status || '');
+    const [vehicleType, setVehicleType] = useState(filters?.vehicle_type || '');
 
     const applyFilters = (overrides = {}) => {
-        router.get(route('teacher.students.index'), { search, status, ...overrides }, { preserveState: true, replace: true });
+        router.get(route('teacher.students.index'), { search, status, vehicle_type: vehicleType, ...overrides }, { preserveState: true, replace: true });
     };
 
     return (
@@ -38,6 +39,12 @@ export default function TeacherStudentsIndex({ students, filters }) {
                     <option value="">All Status</option>
                     <option value="active">Active</option>
                     <option value="completed">Completed</option>
+                </select>
+                <select className="field w-auto" value={vehicleType} onChange={e => { setVehicleType(e.target.value); applyFilters({ vehicle_type: e.target.value }); }}>
+                    <option value="">All Vehicles</option>
+                    <option value="bike">Bike</option>
+                    <option value="car">Car</option>
+                    <option value="both">Both</option>
                 </select>
             </div>
 
@@ -107,6 +114,10 @@ export default function TeacherStudentsIndex({ students, filters }) {
                                             <Link href={route('teacher.students.show', s.id)}
                                                 className="p-1.5 rounded-lg text-muted hover:text-[#D4AF37] hover:bg-white/5 transition-colors inline-flex">
                                                 <Eye size={14} />
+                                            </Link>
+                                            <Link href={route('teacher.students.edit', s.id)}
+                                                className="p-1.5 rounded-lg text-muted hover:text-blue-400 hover:bg-white/5 transition-colors inline-flex">
+                                                <Edit size={14} />
                                             </Link>
                                         </td>
                                     </tr>

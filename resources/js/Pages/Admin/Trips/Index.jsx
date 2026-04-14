@@ -4,10 +4,8 @@ import { useState } from 'react';
 import { Plus, Route, Eye, CheckCircle, Clock, Users, Car, X } from 'lucide-react';
 
 export function TripsIndex({ trips, teachers, filters }) {
-    const [status, setStatus] = useState(filters?.status || '');
-
     const applyFilter = (overrides = {}) => {
-        router.get(route('admin.trips.index'), { status, ...filters, ...overrides }, { preserveState: true, replace: true });
+        router.get(route('admin.trips.index'), { ...filters, ...overrides }, { preserveState: true, replace: true });
     };
 
     return (
@@ -24,17 +22,7 @@ export function TripsIndex({ trips, teachers, filters }) {
                 </Link>
             </div>
 
-            {/* Filter tabs */}
-            <div className="flex gap-1 mb-4 p-1 rounded-xl w-fit" style={{ background: 'rgba(255,255,255,0.04)' }}>
-                {['', 'scheduled', 'in_progress', 'completed', 'cancelled'].map(s => (
-                    <button key={s} onClick={() => { setStatus(s); applyFilter({ status: s }); }}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${
-                            status === s ? 'bg-[#D4AF37] text-[#0a0a1a]' : 'text-muted hover:text-white'
-                        }`}>
-                        {s || 'All'}
-                    </button>
-                ))}
-            </div>
+
 
             <div className="nm-card overflow-hidden" data-aos="fade-up">
                 <div className="overflow-x-auto">
@@ -46,7 +34,6 @@ export function TripsIndex({ trips, teachers, filters }) {
                                 <th>Vehicle</th>
                                 <th>Date & Time</th>
                                 <th>Students</th>
-                                <th>Status</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -72,13 +59,7 @@ export function TripsIndex({ trips, teachers, filters }) {
                                             {t.students_count}
                                         </div>
                                     </td>
-                                    <td>
-                                        <span className={
-                                            t.status === 'completed' ? 'badge-active' :
-                                            t.status === 'scheduled' ? 'badge-pending' :
-                                            t.status === 'in_progress' ? 'badge-active' : 'badge-danger'
-                                        }>{t.status?.replace('_', ' ')}</span>
-                                    </td>
+
                                     <td>
                                         <Link href={route('admin.trips.show', t.id)}
                                             className="p-1.5 rounded-lg text-muted hover:text-[#D4AF37] hover:bg-white/5 transition-colors inline-flex">

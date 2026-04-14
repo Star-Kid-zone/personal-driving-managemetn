@@ -8,6 +8,7 @@ function RecordModal({ payment, onClose }) {
         amount: '', payment_mode: 'cash',
         paid_on: new Date().toISOString().slice(0, 10),
         notes: '', student_id: payment.student_id,
+        payment_status: payment.payment_status,
     });
     const submit = (e) => {
         e.preventDefault();
@@ -32,16 +33,27 @@ function RecordModal({ payment, onClose }) {
                         <div key={name}>
                             <label className="text-xs text-muted mb-1 block">{label}</label>
                             <input type={type} className="field" placeholder={placeholder}
+                                max={name === 'amount' ? payment.balance_due : undefined}
                                 value={data[name]} onChange={e => setData(name, e.target.value)} required={name === 'amount'} />
                         </div>
                     ))}
-                    <div>
-                        <label className="text-xs text-muted mb-1 block">Mode</label>
-                        <select className="field" value={data.payment_mode} onChange={e => setData('payment_mode', e.target.value)}>
-                            {['cash', 'upi', 'card', 'bank_transfer', 'cheque'].map(m => (
-                                <option key={m} value={m}>{m.replace('_', ' ')}</option>
-                            ))}
-                        </select>
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="text-xs text-muted mb-1 block">Mode</label>
+                            <select className="field text-sm" value={data.payment_mode} onChange={e => setData('payment_mode', e.target.value)}>
+                                {['cash', 'upi', 'card', 'bank_transfer', 'cheque'].map(m => (
+                                    <option key={m} value={m}>{m.replace('_', ' ')}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label className="text-xs text-muted mb-1 block">New Status</label>
+                            <select className="field text-sm" value={data.payment_status} onChange={e => setData('payment_status', e.target.value)}>
+                                {['pending', 'partial', 'paid'].map(s => (
+                                    <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                     <div className="flex gap-2 pt-1">
                         <button type="button" onClick={onClose} className="btn-ghost flex-1 text-sm">Cancel</button>
