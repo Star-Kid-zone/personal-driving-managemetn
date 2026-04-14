@@ -5,33 +5,31 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EnrollStudentRequest;
 use App\Http\Requests\UpdateStudentRequest;
-use App\Services\StudentService;
+use App\Services\InvoiceService;
 use App\Services\LlrService;
 use App\Services\PaymentService;
-use App\Services\InvoiceService;
-use App\Models\Teacher;
-use App\Models\Vehicle;
-use Inertia\Inertia;
-use Inertia\Response;
+use App\Services\StudentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class StudentController extends Controller
 {
     public function __construct(
-        private StudentService  $studentService,
-        private LlrService      $llrService,
-        private PaymentService  $paymentService,
-        private InvoiceService  $invoiceService,
+        private StudentService $studentService,
+        private LlrService $llrService,
+        private PaymentService $paymentService,
+        private InvoiceService $invoiceService,
     ) {}
 
     public function index(Request $request): Response
     {
-        $students = $this->studentService->list($request->only(['search', 'status', 'vehicle_type']));
+        $students = $this->studentService->list($request->only(['search', 'status', 'vehicle_type', 'session_status']));
 
         return Inertia::render('Admin/Students/Index', [
             'students' => $students,
-            'filters'  => $request->only(['search', 'status', 'vehicle_type']),
+            'filters' => $request->only(['search', 'status', 'vehicle_type']),
         ]);
     }
 
@@ -59,7 +57,7 @@ class StudentController extends Controller
 
     public function edit(int $id): Response
     {
-        $student  = $this->studentService->findById($id);
+        $student = $this->studentService->findById($id);
 
         return Inertia::render('Admin/Students/Edit', compact('student'));
     }

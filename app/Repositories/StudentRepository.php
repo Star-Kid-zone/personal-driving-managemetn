@@ -18,21 +18,33 @@ class StudentRepository implements StudentRepositoryInterface
             ->with(['payment', 'llrRecord'])
             ->latest();
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('phone', 'like', "%{$search}%")
-                  ->orWhere('student_id', 'like', "%{$search}%");
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('student_id', 'like', "%{$search}%");
             });
         }
 
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
-        if (!empty($filters['vehicle_type'])) {
+        if (! empty($filters['vehicle_type'])) {
             $query->where('vehicle_type', $filters['vehicle_type']);
+        }
+
+        if (! empty($filters['session_status'])) {
+            $status = $filters['session_status'];
+            if ($status === 'not_started') {
+                $query->where('completed_sessions', 0);
+            } elseif ($status === 'ongoing') {
+                $query->where('completed_sessions', '>', 0)
+                    ->whereColumn('completed_sessions', '<', 'total_sessions');
+            } elseif ($status === 'completed') {
+                $query->whereColumn('completed_sessions', 'total_sessions');
+            }
         }
 
         return $query->paginate($filters['per_page'] ?? 15);
@@ -69,6 +81,7 @@ class StudentRepository implements StudentRepositoryInterface
     {
         $student = $this->model->findOrFail($id);
         $student->update($data);
+
         return $student->fresh();
     }
 
@@ -79,7 +92,7 @@ class StudentRepository implements StudentRepositoryInterface
 
     public function getByTeacher(int $teacherId): Collection
     {
-        return $this->model->whereHas('trips.trip', fn($q) => $q->where('teacher_id', $teacherId))
+        return $this->model->whereHas('trips.trip', fn ($q) => $q->where('teacher_id', $teacherId))
             ->with(['payment', 'llrRecord'])
             ->active()
             ->orderBy('name')
@@ -104,20 +117,22 @@ class StudentRepository implements StudentRepositoryInterface
 
     public function getDashboardStats(): array
     {
-        $year  = now()->year;
+        $year = now()->year;
         $month = now()->month;
+
         return [
-            'total'      => $this->model->count(),
-            'active'     => $this->model->where('status', 'active')->count(),
-            'completed'  => $this->model->where('status', 'completed')->count(),
+            'total' => $this->model->count(),
+            'active' => $this->model->where('status', 'active')->count(),
+            'completed' => $this->model->where('status', 'completed')->count(),
             'this_month' => $this->model->whereMonth('created_at', $month)->whereYear('created_at', $year)->count(),
         ];
     }
 
     public function generateStudentId(): string
     {
-        $year  = now()->year;
+        $year = now()->year;
         $count = $this->model->whereYear('created_at', $year)->count() + 1;
+
         return sprintf('DM-%d-%04d', $year, $count);
     }
 }
